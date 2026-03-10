@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1a0f">
+<title>Save It</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0f1a0f 0%, #141e14 100%);
+    color: #e4e7e4;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 0 40px 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .header {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid #2a3a2a;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .icon { font-size: 28px; }
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #f0f4f0;
+    letter-spacing: -0.5px;
+  }
+
+  .total-box {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+  .total-label {
+    font-size: 13px;
+    color: #86efac;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .total-amount {
+    font-size: 36px;
+    font-weight: 800;
+    color: #22c55e;
+    letter-spacing: -1px;
+  }
+  .total-sub {
+    font-size: 13px;
+    color: #6b8f6b;
+    margin-top: 4px;
+  }
+
+  .nav {
+    display: flex;
+    gap: 8px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3a2a;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #3a4a3a;
+    background: transparent;
+    color: #9caf9c;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn.active {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: #22c55e;
+    color: #86efac;
+  }
+
+  .form-wrap, .history-wrap { padding: 20px; }
+
+  .field { margin-bottom: 20px; }
+  .label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4d4c4;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #3a4a3a;
+    background: #1e2e1e;
+    color: #e4e7e4;
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+  }
+  input::placeholder { color: #4b5f4b; }
+
+  .price-input-wrap {
+    position: relative;
+  }
+  .price-prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b8f6b;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .price-input-wrap input {
+    padding-left: 30px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .save-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .save-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .save-btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .confirm-overlay.visible { display: flex; }
+  .confirm-box {
+    background: #1a2a1a;
+    border: 1px solid #2a3a2a;
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    max-width: 340px;
+    width: 100%;
+  }
+  .confirm-emoji { font-size: 48px; margin-bottom: 16px; }
+  .confirm-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: #22c55e;
+    margin-bottom: 8px;
+  }
+  .confirm-item {
+    font-size: 15px;
+    color: #9caf9c;
+    margin-bottom: 20px;
+  }
+  .confirm-msg {
+    font-size: 15px;
+    color: #c4d4c4;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+  .confirm-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .confirm-yes {
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .confirm-later {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #3a4a3a;
+    background: transparent;
+    color: #9caf9c;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .success-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .success-overlay.visible { display: flex; }
+  .success-box {
+    background: #1a2a1a;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    max-width: 340px;
+    width: 100%;
+  }
+  .success-emoji { font-size: 48px; margin-bottom: 12px; }
+  .success-msg {
+    font-size: 16px;
+    color: #86efac;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .success-sub {
+    font-size: 14px;
+    color: #6b8f6b;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .success-total {
+    font-size: 18px;
+    color: #22c55e;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .success-close {
+    padding: 12px 32px;
+    border-radius: 10px;
+    border: 1px solid #3a4a3a;
+    background: transparent;
+    color: #9caf9c;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .card {
+    background: #1e2e1e;
+    border: 1px solid #2a3a2a;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .card-item {
+    font-size: 15px;
+    font-weight: 600;
+    color: #d4e4d4;
+    flex: 1;
+  }
+  .card-amount {
+    font-size: 17px;
+    font-weight: 800;
+    color: #22c55e;
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-date {
+    font-size: 12px;
+    color: #6b8f6b;
+  }
+  .card-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .card-status.transferred {
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+  }
+  .card-status.pending {
+    background: rgba(234, 179, 8, 0.15);
+    color: #fde047;
+    cursor: pointer;
+  }
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #2a3a2a;
+  }
+  .delete-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #3a4a3a;
+    background: transparent;
+    color: #6b8f6b;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .empty-emoji { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 18px; font-weight: 600; color: #c4d4c4; margin-bottom: 4px; }
+  .empty-sub { font-size: 14px; color: #6b8f6b; }
+
+  .export-bar {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 12px;
+  }
+  .export-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #3a4a3a;
+    background: #1e2e1e;
+    color: #9caf9c;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #22c55e;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="icon">🐖</span>
+    <h1 class="title">Save It</h1>
+  </div>
+  <div class="total-box">
+    <div class="total-label">Total Saved</div>
+    <div class="total-amount" id="totalAmount">£0.00</div>
+    <div class="total-sub" id="totalSub"></div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" id="navForm" onclick="showView('form')">+ I Want Something</button>
+  <button class="nav-btn" id="navHistory" onclick="showView('history')">💰 Saved (<span id="entryCount">0</span>)</button>
+</div>
+
+<div class="form-wrap" id="formView">
+  <div class="field">
+    <label class="label">What do you want to buy?</label>
+    <input type="text" id="itemName" placeholder="e.g. New headphones, takeaway, game...">
+  </div>
+
+  <div class="field">
+    <label class="label">How much would it cost?</label>
+    <div class="price-input-wrap">
+      <span class="price-prefix">£</span>
+      <input type="number" id="itemPrice" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
+    </div>
+  </div>
+
+  <button class="save-btn" id="saveBtn" disabled onclick="handleSave()">Save It Instead</button>
+</div>
+
+<div class="history-wrap hidden" id="historyView"></div>
+
+<div class="export-bar">
+  <button class="export-btn" onclick="exportData()">📥 Export Backup</button>
+  <button class="export-btn" onclick="document.getElementById('importFile').click()">📤 Import Backup</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-emoji">🐖</div>
+    <div class="confirm-amount" id="confirmAmount">£0.00</div>
+    <div class="confirm-item" id="confirmItem"></div>
+    <div class="confirm-msg">Now transfer that exact amount to your savings. You didn't need it — your future self will thank you.</div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" onclick="confirmTransfer(true)">✓ Done — I've transferred it</button>
+      <button class="confirm-later" onclick="confirmTransfer(false)">I'll do it later</button>
+    </div>
+  </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-emoji" id="successEmoji">🎉</div>
+    <div class="success-msg" id="successMsg">Nice one!</div>
+    <div class="success-sub" id="successSub"></div>
+    <div class="success-total" id="successTotal"></div>
+    <button class="success-close" onclick="closeSuccess()">Got it</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'save-it-entries';
+const ENCOURAGEMENTS = [
+  { emoji: '🎉', msg: 'Nice one!', sub: "That's money in YOUR pocket, not theirs." },
+  { emoji: '💪', msg: 'Strong move!', sub: "You didn't need it. You proved it." },
+  { emoji: '🌟', msg: 'Look at you go!', sub: 'Every time you do this, it gets easier.' },
+  { emoji: '🐖', msg: 'Piggy bank loves you!', sub: 'Another win. Keep stacking.' },
+  { emoji: '👏', msg: 'Brilliant!', sub: "That impulse didn't stand a chance." },
+  { emoji: '🏆', msg: 'Champion!', sub: 'Future you is going to be so glad.' },
+  { emoji: '🔥', msg: "You're on fire!", sub: 'The savings are adding up.' },
+  { emoji: '✨', msg: 'Smart call!', sub: "You wanted it, you didn't need it. Done." },
+];
+
+let entries = [];
+let pendingEntry = null;
+
+function init() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) entries = JSON.parse(raw);
+  } catch(e) {}
+
+  document.getElementById('itemName').addEventListener('input', checkForm);
+  document.getElementById('itemPrice').addEventListener('input', checkForm);
+
+  updateUI();
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function checkForm() {
+  const name = document.getElementById('itemName').value.trim();
+  const price = parseFloat(document.getElementById('itemPrice').value);
+  document.getElementById('saveBtn').disabled = !name || !price || price <= 0;
+}
+
+function updateUI() {
+  const total = entries.reduce((sum, e) => sum + e.price, 0);
+  document.getElementById('totalAmount').textContent = '\u00a3' + total.toFixed(2);
+
+  const count = entries.length;
+  if (count > 0) {
+    document.getElementById('totalSub').textContent = count + ' impulse' + (count === 1 ? '' : 's') + ' resisted';
+  } else {
+    document.getElementById('totalSub').textContent = '';
+  }
+
+  document.getElementById('entryCount').textContent = entries.length;
+}
+
+function handleSave() {
+  const name = document.getElementById('itemName').value.trim();
+  const price = parseFloat(document.getElementById('itemPrice').value);
+  if (!name || !price || price <= 0) return;
+
+  pendingEntry = {
+    id: Date.now(),
+    item: name,
+    price: price,
+    date: new Date().toISOString(),
+    transferred: false
+  };
+
+  document.getElementById('confirmAmount').textContent = '\u00a3' + price.toFixed(2);
+  document.getElementById('confirmItem').textContent = 'Instead of: ' + name;
+  document.getElementById('confirmOverlay').classList.add('visible');
+}
+
+function confirmTransfer(didTransfer) {
+  document.getElementById('confirmOverlay').classList.remove('visible');
+
+  if (pendingEntry) {
+    pendingEntry.transferred = didTransfer;
+    entries.push(pendingEntry);
+    save();
+    updateUI();
+
+    document.getElementById('itemName').value = '';
+    document.getElementById('itemPrice').value = '';
+    document.getElementById('saveBtn').disabled = true;
+
+    const enc = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
+    document.getElementById('successEmoji').textContent = enc.emoji;
+    document.getElementById('successMsg').textContent = enc.msg;
+    document.getElementById('successSub').textContent = enc.sub;
+    const totalNow = entries.reduce((sum, e) => sum + e.price, 0);
+    document.getElementById('successTotal').textContent = 'Total saved: \u00a3' + totalNow.toFixed(2);
+    document.getElementById('successOverlay').classList.add('visible');
+
+    pendingEntry = null;
+  }
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('visible');
+}
+
+function markTransferred(id) {
+  entries = entries.map(e => e.id === id ? { ...e, transferred: true } : e);
+  save();
+  renderHistory();
+  showToast('Marked as transferred \u2713');
+}
+
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  save();
+  renderHistory();
+  updateUI();
+}
+
+function showView(v) {
+  const formEl = document.getElementById('formView');
+  const histEl = document.getElementById('historyView');
+  const navF = document.getElementById('navForm');
+  const navH = document.getElementById('navHistory');
+
+  if (v === 'form') {
+    formEl.classList.remove('hidden');
+    histEl.classList.add('hidden');
+    navF.classList.add('active');
+    navH.classList.remove('active');
+  } else {
+    formEl.classList.add('hidden');
+    histEl.classList.remove('hidden');
+    navF.classList.remove('active');
+    navH.classList.add('active');
+    renderHistory();
+  }
+}
+
+function renderHistory() {
+  const wrap = document.getElementById('historyView');
+
+  if (entries.length === 0) {
+    wrap.innerHTML = '<div class="empty-state"><p class="empty-emoji">\ud83d\udc16</p><p class="empty-text">No saves yet</p><p class="empty-sub">Next time you want to buy something, come here first</p></div>';
+    return;
+  }
+
+  let html = '';
+  const sorted = [...entries].reverse();
+  sorted.forEach(function(entry) {
+    const dateStr = new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const statusClass = entry.transferred ? 'transferred' : 'pending';
+    const statusText = entry.transferred ? '\u2713 Transferred' : 'Tap to confirm transfer';
+    const statusClick = entry.transferred ? '' : ' onclick="markTransferred(' + entry.id + ')"';
+
+    html += '<div class="card">'
+      + '<div class="card-header">'
+      + '<span class="card-item">' + escHtml(entry.item) + '</span>'
+      + '<span class="card-amount">\u00a3' + entry.price.toFixed(2) + '</span>'
+      + '</div>'
+      + '<div class="card-meta">'
+      + '<span class="card-date">' + dateStr + '</span>'
+      + '<span class="card-status ' + statusClass + '"' + statusClick + '>' + statusText + '</span>'
+      + '</div>'
+      + '<div class="card-actions">'
+      + '<button class="delete-btn" onclick="deleteEntry(' + entry.id + ')">\ud83d\uddd1\ufe0f</button>'
+      + '</div>'
+      + '</div>';
+  });
+
+  wrap.innerHTML = html;
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function exportData() {
+  if (entries.length === 0) { showToast('No entries to export'); return; }
+  var blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'save-it-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Backup saved \u2713');
+}
+
+function importData(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Bad format');
+      entries = imported;
+      save();
+      updateUI();
+      renderHistory();
+      showToast('Imported ' + entries.length + ' entries \u2713');
+    } catch(err) {
+      showToast('Import failed \u2014 bad file');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+init();
+</script>
+</body>
+</html>
