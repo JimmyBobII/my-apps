@@ -5,393 +5,830 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f0f14">
+<meta name="theme-color" content="#0a0a0f">
 <title>Med Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
-  body {
-    min-height: 100vh;
-    background: linear-gradient(180deg, #0f0f14 0%, #1a1a24 100%);
-    color: #e4e4e7;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 0 40px 0;
-    -webkit-font-smoothing: antialiased;
-  }
+:root {
+  --bg-deep: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-card-hover: #181824;
+  --bg-input: #16161f;
+  --border: #1e1e2e;
+  --border-focus: #3d3d5c;
+  --text-primary: #e8e8ed;
+  --text-secondary: #7a7a8e;
+  --text-muted: #4a4a5e;
+  --accent: #6c63ff;
+  --accent-glow: rgba(108, 99, 255, 0.15);
+  --accent-soft: #8b85ff;
+  --green: #2dd4a0;
+  --green-bg: rgba(45, 212, 160, 0.08);
+  --green-border: rgba(45, 212, 160, 0.2);
+  --red: #ff6b6b;
+  --red-bg: rgba(255, 107, 107, 0.08);
+  --red-border: rgba(255, 107, 107, 0.2);
+  --orange: #ffb347;
+  --yellow: #ffd93d;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font: 'DM Sans', sans-serif;
+  --mono: 'Space Mono', monospace;
+}
 
-  .header {
-    padding: 28px 20px 20px;
-    border-bottom: 1px solid #2a2a3a;
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 6px;
-  }
-  .pill { font-size: 28px; }
-  .title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #f4f4f5;
-    letter-spacing: -0.5px;
-  }
-  .date-text {
-    font-size: 14px;
-    color: #9ca3af;
-    margin-top: 4px;
-  }
-  .streak {
-    font-size: 13px;
-    color: #7c85f0;
-    margin-top: 8px;
-    font-weight: 600;
-    display: none;
-  }
-  .streak.visible { display: block; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  .nav {
-    display: flex;
-    gap: 8px;
-    padding: 16px 20px;
-    border-bottom: 1px solid #2a2a3a;
-  }
-  .nav-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #3a3a4a;
-    background: transparent;
-    color: #9ca3af;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .nav-btn.active {
-    background: rgba(124, 133, 240, 0.12);
-    border-color: #7c85f0;
-    color: #a5adff;
-  }
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font);
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 0 100px 0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-  .form-wrap, .history-wrap { padding: 20px; }
+/* ── Ambient background ── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(108, 99, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-  .already-done {
-    background: rgba(34, 197, 94, 0.08);
-    border: 1px solid rgba(34, 197, 94, 0.25);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #86efac;
-    margin-bottom: 16px;
-    display: none;
-  }
-  .already-done.visible { display: block; }
+/* ── Header ── */
+.header {
+  position: relative;
+  padding: 32px 20px 20px;
+  z-index: 1;
+}
 
-  .day-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #7c85f0 0%, #6366f1 100%);
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
 
-  .field { margin-bottom: 20px; }
-  .label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: #d4d4d8;
-    margin-bottom: 8px;
-  }
-  .mood-label-suffix { font-weight: 600; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-  .toggle-row, .ptsd-row, .mood-row { display: flex; gap: 8px; }
-  .mood-row { gap: 8px; justify-content: space-between; }
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 20px rgba(108, 99, 255, 0.25);
+}
 
-  .toggle-btn {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #3a3a4a;
-    background: #1e1e2e;
-    color: #9ca3af;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .toggle-btn.yes {
-    background: rgba(34, 197, 94, 0.12);
-    border-color: #22c55e;
-    color: #86efac;
-  }
-  .toggle-btn.no {
-    background: rgba(239, 68, 68, 0.12);
-    border-color: #ef4444;
-    color: #fca5a5;
-  }
-  .toggle-btn.fever-no {
-    background: rgba(34, 197, 94, 0.12);
-    border-color: #22c55e;
-    color: #86efac;
-  }
-  .toggle-btn.fever-yes {
-    background: rgba(239, 68, 68, 0.12);
-    border-color: #ef4444;
-    color: #fca5a5;
-  }
+.brand-text h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
 
-  .mood-btn {
-    flex: 1;
-    padding: 12px 4px;
-    border-radius: 12px;
-    border: 1px solid #3a3a4a;
-    background: #1e1e2e;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-  }
-  .mood-btn.selected {
-    transform: scale(1.12);
-  }
+.brand-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
 
-  .ptsd-btn {
-    flex: 1;
-    padding: 10px 4px;
-    border-radius: 10px;
-    border: 1px solid #3a3a4a;
-    background: #1e1e2e;
-    color: #9ca3af;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .ptsd-btn.active {
-    background: rgba(124, 133, 240, 0.12);
-    border-color: #7c85f0;
-    color: #a5adff;
-  }
+.header-streak {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent-soft);
+  background: var(--accent-glow);
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(108, 99, 255, 0.15);
+  white-space: nowrap;
+  display: none;
+}
 
-  textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #3a3a4a;
-    background: #1e1e2e;
-    color: #e4e4e7;
-    font-size: 15px;
-    font-family: inherit;
-    resize: vertical;
-    outline: none;
-  }
-  textarea::placeholder { color: #4b5563; }
+.header-streak.visible { display: block; }
 
-  .submit-btn {
-    width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(135deg, #7c85f0 0%, #6366f1 100%);
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: all 0.2s;
-  }
-  .submit-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+/* ── At-a-glance summary strip ── */
+.glance {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 20px;
+  margin-bottom: 4px;
+  z-index: 1;
+  position: relative;
+}
 
-  .cancel-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #3a3a4a;
-    background: transparent;
-    color: #9ca3af;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: 10px;
-    display: none;
-  }
-  .cancel-btn.visible { display: block; }
+.glance-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  text-align: center;
+  transition: all 0.2s;
+}
 
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-  }
-  .empty-emoji { font-size: 48px; margin-bottom: 12px; }
-  .empty-text { font-size: 18px; font-weight: 600; color: #d4d4d8; margin-bottom: 4px; }
-  .empty-sub { font-size: 14px; color: #6b7280; }
+.glance-value {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
 
-  .card {
-    background: #1e1e2e;
-    border: 1px solid #2a2a3a;
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .card-day-num { font-size: 16px; font-weight: 700; color: #a5adff; }
-  .card-date { font-size: 12px; color: #6b7280; margin-top: 2px; }
-  .card-mood { font-size: 28px; }
-  .card-body { display: flex; flex-direction: column; gap: 6px; }
-  .card-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 4px 0;
-  }
-  .card-label { font-size: 13px; color: #6b7280; font-weight: 500; min-width: 70px; }
-  .card-value { font-size: 13px; color: #d4d4d8; text-align: right; flex: 1; }
-  .card-notes {
-    margin-top: 8px;
-    padding: 10px 12px;
-    background: #15151f;
-    border-radius: 8px;
-    font-size: 13px;
-    color: #9ca3af;
-    line-height: 1.4;
-  }
-  .card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid #2a2a3a;
-  }
-  .edit-btn, .delete-btn {
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1px solid #3a3a4a;
-    background: transparent;
-    color: #9ca3af;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .delete-btn { color: #6b7280; padding: 6px 10px; }
+.glance-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
 
-  .export-bar {
-    display: flex;
-    gap: 8px;
-    padding: 0 20px 12px;
-  }
-  .export-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #3a3a4a;
-    background: #1e1e2e;
-    color: #9ca3af;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .export-btn:active {
-    background: #2a2a3a;
-  }
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #22c55e;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
+/* ── Navigation ── */
+.nav {
+  display: flex;
+  gap: 4px;
+  padding: 16px 20px;
+  position: relative;
+  z-index: 1;
+}
 
-  .hidden { display: none !important; }
+.nav-btn {
+  flex: 1;
+  padding: 11px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-btn.active {
+  background: var(--accent-glow);
+  border-color: rgba(108, 99, 255, 0.3);
+  color: var(--accent-soft);
+}
+
+.nav-btn .count {
+  font-family: var(--mono);
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* ── Sections ── */
+.section {
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.hidden { display: none !important; }
+
+/* ── Day badge ── */
+.day-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-soft);
+  background: var(--accent-glow);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.day-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ── Already done banner ── */
+.already-done {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green);
+  margin-bottom: 16px;
+  display: none;
+}
+
+.already-done.visible { display: block; }
+
+/* ── Field groups ── */
+.field {
+  margin-bottom: 22px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+}
+
+.label-suffix {
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Toggle buttons (dose, fever) ── */
+.toggle-row { display: flex; gap: 8px; }
+
+.toggle-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.toggle-btn.yes {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 20px rgba(45, 212, 160, 0.08);
+}
+
+.toggle-btn.no {
+  background: var(--red-bg);
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.08);
+}
+
+/* ── Mood selector ── */
+.mood-row {
+  display: flex;
+  gap: 6px;
+}
+
+.mood-btn {
+  flex: 1;
+  aspect-ratio: 1;
+  max-width: 72px;
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  background: var(--bg-input);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 4px;
+}
+
+.mood-btn .mood-emoji { font-size: 26px; transition: transform 0.25s; }
+.mood-btn .mood-label { font-size: 9px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.3px; }
+
+.mood-btn.selected {
+  transform: scale(1.1);
+  border-width: 2px;
+  box-shadow: 0 4px 24px var(--_glow);
+}
+
+.mood-btn.selected .mood-emoji { transform: scale(1.1); }
+
+/* ── Side effects checklist ── */
+.fx-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fx-chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.fx-chip.active {
+  background: rgba(255, 179, 71, 0.1);
+  border-color: rgba(255, 179, 71, 0.35);
+  color: var(--orange);
+}
+
+/* ── PTSD selector ── */
+.ptsd-row { display: flex; gap: 6px; }
+
+.ptsd-btn {
+  flex: 1;
+  padding: 10px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ptsd-btn.active {
+  background: var(--accent-glow);
+  border-color: rgba(108, 99, 255, 0.4);
+  color: var(--accent-soft);
+}
+
+/* ── Textarea ── */
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+textarea:focus { border-color: var(--border-focus); }
+textarea::placeholder { color: var(--text-muted); }
+
+/* ── Submit ── */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.25s;
+  box-shadow: 0 4px 24px rgba(108, 99, 255, 0.2);
+  letter-spacing: 0.3px;
+}
+
+.submit-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.submit-btn:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.cancel-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+  display: none;
+}
+
+.cancel-btn.visible { display: block; }
+
+/* ── Chart view ── */
+.chart-section {
+  margin-bottom: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.chart-range {
+  display: flex;
+  gap: 4px;
+}
+
+.chart-range-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chart-range-btn.active {
+  background: var(--accent-glow);
+  border-color: rgba(108, 99, 255, 0.3);
+  color: var(--accent-soft);
+}
+
+.chart-canvas-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 12px 12px;
+  position: relative;
+}
+
+canvas { width: 100%; display: block; }
+
+.chart-empty {
+  text-align: center;
+  padding: 30px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── FX frequency bar ── */
+.fx-bar-list { display: flex; flex-direction: column; gap: 8px; }
+
+.fx-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fx-bar-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 80px;
+}
+
+.fx-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fx-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--orange), #ff8a47);
+  transition: width 0.4s ease;
+}
+
+.fx-bar-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 20px;
+  text-align: right;
+}
+
+/* ── History cards ── */
+.history-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.hc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.hc-day {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-soft);
+}
+
+.hc-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.hc-mood { font-size: 30px; }
+
+.hc-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.hc-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid;
+}
+
+.hc-pill.dose-yes { color: var(--green); border-color: var(--green-border); background: var(--green-bg); }
+.hc-pill.dose-no { color: var(--red); border-color: var(--red-border); background: var(--red-bg); }
+.hc-pill.ptsd { color: var(--accent-soft); border-color: rgba(108, 99, 255, 0.2); background: var(--accent-glow); }
+.hc-pill.fever { color: var(--red); border-color: var(--red-border); background: var(--red-bg); }
+.hc-pill.fx { color: var(--orange); border-color: rgba(255, 179, 71, 0.2); background: rgba(255, 179, 71, 0.06); }
+
+.hc-notes {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 8px 10px;
+  background: var(--bg-deep);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.hc-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.hc-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.hc-btn:active { background: var(--bg-input); }
+
+/* ── Export bar ── */
+.export-bar {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.export-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-btn:active { background: var(--bg-card-hover); }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.empty-icon { font-size: 40px; margin-bottom: 10px; opacity: 0.6; }
+.empty-text { font-size: 15px; font-weight: 600; color: var(--text-secondary); }
+.empty-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 999;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Delete confirm modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+}
+
+.modal h3 { font-size: 16px; margin-bottom: 8px; }
+.modal p { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+
+.modal-actions { display: flex; gap: 8px; }
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-btn.danger {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  color: var(--red);
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.history-card { animation: fadeUp 0.3s ease both; }
+
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-top">
-    <span class="pill">💊</span>
-    <h1 class="title">Med Tracker</h1>
+  <div class="header-row">
+    <div class="brand">
+      <div class="brand-icon">💊</div>
+      <div class="brand-text">
+        <h1>Med Tracker</h1>
+        <div class="brand-date" id="dateText"></div>
+      </div>
+    </div>
+    <div class="header-streak" id="streak"></div>
   </div>
-  <p class="date-text" id="dateText"></p>
-  <p class="streak" id="streak"></p>
 </div>
 
+<!-- At-a-glance -->
+<div class="glance" id="glance">
+  <div class="glance-card">
+    <div class="glance-value" id="glanceMood">—</div>
+    <div class="glance-label">Avg Mood</div>
+  </div>
+  <div class="glance-card">
+    <div class="glance-value" id="glanceDoses">—</div>
+    <div class="glance-label">Doses ✓</div>
+  </div>
+  <div class="glance-card">
+    <div class="glance-value" id="glanceStreak">—</div>
+    <div class="glance-label">Day Streak</div>
+  </div>
+</div>
+
+<!-- Nav -->
 <div class="nav">
-  <button class="nav-btn active" id="navForm" onclick="showView('form')">+ Check In</button>
-  <button class="nav-btn" id="navHistory" onclick="showView('history')">📋 History (<span id="entryCount">0</span>)</button>
+  <button class="nav-btn active" id="navForm" onclick="showView('form')">Check In</button>
+  <button class="nav-btn" id="navCharts" onclick="showView('charts')">Trends</button>
+  <button class="nav-btn" id="navHistory" onclick="showView('history')">History <span class="count" id="entryCount">0</span></button>
 </div>
 
-<div class="form-wrap" id="formView">
-  <div class="already-done" id="alreadyDone">
-    ✅ You've already logged today! You can still add another entry or edit a previous one from history.
-  </div>
-
+<!-- ═══ FORM VIEW ═══ -->
+<div class="section" id="formView">
+  <div class="already-done" id="alreadyDone">✅ Already logged today — you can still add another or edit from history.</div>
   <div class="day-badge" id="dayBadge">Day 1</div>
 
-  <!-- Dose -->
   <div class="field">
-    <label class="label">Dose taken?</label>
+    <div class="label">Dose</div>
     <div class="toggle-row">
       <button class="toggle-btn" id="doseYes" onclick="setDose(true)">✓ Taken</button>
       <button class="toggle-btn" id="doseNo" onclick="setDose(false)">✗ Missed</button>
     </div>
   </div>
 
-  <!-- Mood -->
   <div class="field">
-    <label class="label">Mood <span class="mood-label-suffix" id="moodSuffix"></span></label>
+    <div class="label">Mood <span class="label-suffix" id="moodSuffix"></span></div>
     <div class="mood-row" id="moodRow"></div>
   </div>
 
-  <!-- Physical -->
   <div class="field">
-    <label class="label">Physical symptoms</label>
-    <textarea id="physical" rows="2" placeholder="Fog, sleep issues, irritability..."></textarea>
+    <div class="label">Side Effects</div>
+    <div class="fx-grid" id="fxGrid"></div>
   </div>
 
-  <!-- PTSD -->
   <div class="field">
-    <label class="label">PTSD check</label>
+    <div class="label">Other Physical</div>
+    <textarea id="physical" rows="2" placeholder="Anything not covered above..."></textarea>
+  </div>
+
+  <div class="field">
+    <div class="label">PTSD Check</div>
     <div class="ptsd-row" id="ptsdRow"></div>
   </div>
 
-  <!-- Fever -->
   <div class="field">
-    <label class="label">Fever?</label>
+    <div class="label">Fever</div>
     <div class="toggle-row">
       <button class="toggle-btn" id="feverNo" onclick="setFever(false)">No</button>
       <button class="toggle-btn" id="feverYes" onclick="setFever(true)">Yes 🌡️</button>
     </div>
   </div>
 
-  <!-- Notes -->
   <div class="field">
-    <label class="label">Notes</label>
+    <div class="label">Notes</div>
     <textarea id="notes" rows="3" placeholder="Anything else worth noting..."></textarea>
   </div>
 
@@ -399,41 +836,96 @@
   <button class="cancel-btn" id="cancelBtn" onclick="cancelEdit()">Cancel Edit</button>
 </div>
 
-<div class="history-wrap hidden" id="historyView"></div>
+<!-- ═══ CHARTS VIEW ═══ -->
+<div class="section hidden" id="chartsView">
+  <div class="chart-section">
+    <div class="chart-header">
+      <div class="chart-title">Mood Trend</div>
+      <div class="chart-range">
+        <button class="chart-range-btn active" onclick="setChartRange(7, this)">7d</button>
+        <button class="chart-range-btn" onclick="setChartRange(14, this)">14d</button>
+        <button class="chart-range-btn" onclick="setChartRange(30, this)">30d</button>
+        <button class="chart-range-btn" onclick="setChartRange(0, this)">All</button>
+      </div>
+    </div>
+    <div class="chart-canvas-wrap">
+      <canvas id="moodChart" height="160"></canvas>
+      <div class="chart-empty hidden" id="chartEmpty">Log a few days to see trends</div>
+    </div>
+  </div>
 
+  <div class="chart-section">
+    <div class="chart-header">
+      <div class="chart-title">Side Effect Frequency</div>
+    </div>
+    <div class="chart-canvas-wrap">
+      <div class="fx-bar-list" id="fxBars"></div>
+      <div class="chart-empty hidden" id="fxEmpty">No side effects logged yet</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HISTORY VIEW ═══ -->
+<div class="section hidden" id="historyView"></div>
+
+<!-- Export -->
 <div class="export-bar" id="exportBar">
-  <button class="export-btn" onclick="exportData()">📥 Export Backup</button>
-  <button class="export-btn" onclick="document.getElementById('importFile').click()">📤 Import Backup</button>
+  <button class="export-btn" onclick="exportJSON()">📥 Export JSON</button>
+  <button class="export-btn" onclick="exportCSV()">📊 Export CSV</button>
+  <button class="export-btn" onclick="document.getElementById('importFile').click()">📤 Import</button>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
 </div>
 
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Delete confirm -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete entry?</h3>
+    <p>This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeDeleteModal()">Keep</button>
+      <button class="modal-btn danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ── Data ──
 const MOODS = [
-  { emoji: '😫', label: 'Awful', value: 1, color: '#ef4444' },
-  { emoji: '😟', label: 'Rough', value: 2, color: '#f97316' },
-  { emoji: '😐', label: 'Meh',   value: 3, color: '#eab308' },
-  { emoji: '🙂', label: 'Okay',  value: 4, color: '#22c55e' },
-  { emoji: '😊', label: 'Good',  value: 5, color: '#10b981' },
+  { emoji: '😫', label: 'Awful', value: 1, color: '#ef4444', glow: 'rgba(239,68,68,0.15)' },
+  { emoji: '😟', label: 'Rough', value: 2, color: '#f97316', glow: 'rgba(249,115,22,0.15)' },
+  { emoji: '😐', label: 'Meh',   value: 3, color: '#eab308', glow: 'rgba(234,179,8,0.15)' },
+  { emoji: '🙂', label: 'Okay',  value: 4, color: '#2dd4a0', glow: 'rgba(45,212,160,0.15)' },
+  { emoji: '😊', label: 'Good',  value: 5, color: '#10b981', glow: 'rgba(16,185,129,0.15)' },
 ];
+
 const PTSD_LEVELS = ['None', 'Minor', 'Moderate', 'Severe'];
+
+const SIDE_EFFECTS = [
+  'Brain fog', 'Headache', 'Nausea', 'Dizziness',
+  'Insomnia', 'Fatigue', 'Anxiety', 'Word-finding',
+  'Tremor', 'Rash', 'Appetite change'
+];
+
 const STORAGE_KEY = 'med-tracker-entries';
-
 let entries = [];
-let state = { mood: null, dose: null, ptsd: null, fever: null, editingId: null };
+let state = { mood: null, dose: null, ptsd: null, fever: null, sideEffects: [], editingId: null };
+let chartRange = 7;
+let pendingDeleteId = null;
 
-// Init
+// ── Init ──
 function init() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) entries = JSON.parse(raw);
+    // migrate: add sideEffects array if missing
+    entries.forEach(e => { if (!e.sideEffects) e.sideEffects = []; });
   } catch(e) {}
 
-  // Date
-  const now = new Date();
-  document.getElementById('dateText').textContent = now.toLocaleDateString('en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long'
+  document.getElementById('dateText').textContent = new Date().toLocaleDateString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'short'
   });
 
   // Build mood buttons
@@ -442,7 +934,8 @@ function init() {
     const btn = document.createElement('button');
     btn.className = 'mood-btn';
     btn.id = 'mood-' + m.value;
-    btn.textContent = m.emoji;
+    btn.style.setProperty('--_glow', m.glow);
+    btn.innerHTML = `<span class="mood-emoji">${m.emoji}</span><span class="mood-label">${m.label}</span>`;
     btn.onclick = () => setMood(m.value);
     moodRow.appendChild(btn);
   });
@@ -458,12 +951,21 @@ function init() {
     ptsdRow.appendChild(btn);
   });
 
+  // Build side effects chips
+  const fxGrid = document.getElementById('fxGrid');
+  SIDE_EFFECTS.forEach(fx => {
+    const chip = document.createElement('button');
+    chip.className = 'fx-chip';
+    chip.textContent = fx;
+    chip.dataset.fx = fx;
+    chip.onclick = () => toggleFx(fx, chip);
+    fxGrid.appendChild(chip);
+  });
+
   updateUI();
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
 
 function getNextDay() {
   if (entries.length === 0) return 1;
@@ -478,18 +980,18 @@ function hasTodayEntry() {
   });
 }
 
+// ── UI Updates ──
 function updateUI() {
   // Streak
   const streakEl = document.getElementById('streak');
   if (entries.length > 0) {
     const dosesTaken = entries.filter(e => e.doseTaken).length;
-    streakEl.textContent = `Day ${getNextDay() - 1} tracked · ${dosesTaken}/${entries.length} doses taken`;
+    streakEl.textContent = `${dosesTaken}/${entries.length} doses`;
     streakEl.classList.add('visible');
   } else {
     streakEl.classList.remove('visible');
   }
 
-  // Entry count
   document.getElementById('entryCount').textContent = entries.length;
 
   // Day badge
@@ -500,20 +1002,17 @@ function updateUI() {
     document.getElementById('dayBadge').textContent = 'Day ' + getNextDay();
   }
 
-  // Today check
+  // Already done
   const ad = document.getElementById('alreadyDone');
-  if (hasTodayEntry() && !state.editingId) {
-    ad.classList.add('visible');
-  } else {
-    ad.classList.remove('visible');
-  }
+  if (hasTodayEntry() && !state.editingId) ad.classList.add('visible');
+  else ad.classList.remove('visible');
 
-  // Submit button
+  // Submit
   const btn = document.getElementById('submitBtn');
   btn.disabled = (state.mood === null || state.dose === null);
   btn.textContent = state.editingId ? 'Save Changes' : 'Log Day';
 
-  // Cancel button
+  // Cancel
   const cancel = document.getElementById('cancelBtn');
   if (state.editingId) cancel.classList.add('visible');
   else cancel.classList.remove('visible');
@@ -527,8 +1026,46 @@ function updateUI() {
   } else {
     suffix.textContent = '';
   }
+
+  // Glance cards
+  updateGlance();
 }
 
+function updateGlance() {
+  const moodEl = document.getElementById('glanceMood');
+  const doseEl = document.getElementById('glanceDoses');
+  const streakEl = document.getElementById('glanceStreak');
+
+  if (entries.length === 0) {
+    moodEl.textContent = '—';
+    doseEl.textContent = '—';
+    streakEl.textContent = '—';
+    return;
+  }
+
+  // Avg mood (last 7)
+  const recent = entries.slice(-7);
+  const avg = recent.reduce((s, e) => s + e.mood, 0) / recent.length;
+  const moodObj = MOODS[Math.round(avg) - 1] || MOODS[2];
+  moodEl.textContent = moodObj.emoji;
+
+  // Dose adherence
+  const taken = entries.filter(e => e.doseTaken).length;
+  const pct = Math.round((taken / entries.length) * 100);
+  doseEl.textContent = pct + '%';
+  doseEl.style.color = pct >= 90 ? 'var(--green)' : pct >= 70 ? 'var(--orange)' : 'var(--red)';
+
+  // Current streak
+  let streak = 0;
+  for (let i = entries.length - 1; i >= 0; i--) {
+    if (entries[i].doseTaken) streak++;
+    else break;
+  }
+  streakEl.textContent = streak;
+  streakEl.style.color = streak >= 7 ? 'var(--green)' : 'var(--accent-soft)';
+}
+
+// ── State setters ──
 function setDose(val) {
   state.dose = val;
   document.getElementById('doseYes').className = 'toggle-btn' + (val === true ? ' yes' : '');
@@ -542,12 +1079,12 @@ function setMood(val) {
     const btn = document.getElementById('mood-' + m.value);
     if (m.value === val) {
       btn.className = 'mood-btn selected';
-      btn.style.background = m.color + '22';
+      btn.style.background = m.glow;
       btn.style.borderColor = m.color;
     } else {
       btn.className = 'mood-btn';
-      btn.style.background = '#1e1e2e';
-      btn.style.borderColor = '#3a3a4a';
+      btn.style.background = 'var(--bg-input)';
+      btn.style.borderColor = 'var(--border)';
     }
   });
   updateUI();
@@ -562,12 +1099,24 @@ function setPtsd(level) {
 
 function setFever(val) {
   state.fever = val;
-  document.getElementById('feverNo').className = 'toggle-btn' + (val === false ? ' fever-no' : '');
-  document.getElementById('feverYes').className = 'toggle-btn' + (val === true ? ' fever-yes' : '');
+  document.getElementById('feverNo').className = 'toggle-btn' + (val === false ? ' yes' : '');
+  document.getElementById('feverYes').className = 'toggle-btn' + (val === true ? ' no' : '');
 }
 
+function toggleFx(fx, chip) {
+  const idx = state.sideEffects.indexOf(fx);
+  if (idx === -1) {
+    state.sideEffects.push(fx);
+    chip.classList.add('active');
+  } else {
+    state.sideEffects.splice(idx, 1);
+    chip.classList.remove('active');
+  }
+}
+
+// ── Form handling ──
 function resetForm() {
-  state = { mood: null, dose: null, ptsd: null, fever: null, editingId: null };
+  state = { mood: null, dose: null, ptsd: null, fever: null, sideEffects: [], editingId: null };
   document.getElementById('physical').value = '';
   document.getElementById('notes').value = '';
   document.getElementById('doseYes').className = 'toggle-btn';
@@ -577,20 +1126,17 @@ function resetForm() {
   MOODS.forEach(m => {
     const btn = document.getElementById('mood-' + m.value);
     btn.className = 'mood-btn';
-    btn.style.background = '#1e1e2e';
-    btn.style.borderColor = '#3a3a4a';
+    btn.style.background = 'var(--bg-input)';
+    btn.style.borderColor = 'var(--border)';
   });
-  PTSD_LEVELS.forEach(l => {
-    document.getElementById('ptsd-' + l).className = 'ptsd-btn';
-  });
+  PTSD_LEVELS.forEach(l => { document.getElementById('ptsd-' + l).className = 'ptsd-btn'; });
+  document.querySelectorAll('.fx-chip').forEach(c => c.classList.remove('active'));
   updateUI();
 }
 
 function handleSubmit() {
   if (state.mood === null || state.dose === null) return;
-
   const existing = state.editingId ? entries.find(e => e.id === state.editingId) : null;
-
   const entry = {
     id: state.editingId || Date.now(),
     day: existing ? existing.day : getNextDay(),
@@ -600,6 +1146,7 @@ function handleSubmit() {
     physical: document.getElementById('physical').value,
     ptsd: state.ptsd || 'None',
     fever: state.fever || false,
+    sideEffects: [...state.sideEffects],
     notes: document.getElementById('notes').value,
   };
 
@@ -611,13 +1158,11 @@ function handleSubmit() {
   entries.sort((a, b) => a.day - b.day);
   save();
   resetForm();
+  showToast(state.editingId ? 'Updated ✓' : 'Day logged ✓');
   showView('history');
 }
 
-function cancelEdit() {
-  resetForm();
-  updateUI();
-}
+function cancelEdit() { resetForm(); }
 
 function editEntry(id) {
   const entry = entries.find(e => e.id === id);
@@ -627,91 +1172,93 @@ function editEntry(id) {
   setMood(entry.mood);
   setPtsd(entry.ptsd || 'None');
   setFever(entry.fever || false);
+  // Side effects
+  state.sideEffects = [...(entry.sideEffects || [])];
+  document.querySelectorAll('.fx-chip').forEach(c => {
+    if (state.sideEffects.includes(c.dataset.fx)) c.classList.add('active');
+    else c.classList.remove('active');
+  });
   document.getElementById('physical').value = entry.physical || '';
   document.getElementById('notes').value = entry.notes || '';
   showView('form');
   updateUI();
 }
 
-function deleteEntry(id) {
-  entries = entries.filter(e => e.id !== id);
-  save();
-  renderHistory();
-  updateUI();
+function requestDelete(id) {
+  pendingDeleteId = id;
+  document.getElementById('deleteModal').classList.add('open');
+  document.getElementById('confirmDeleteBtn').onclick = () => confirmDelete();
 }
 
+function confirmDelete() {
+  if (pendingDeleteId !== null) {
+    entries = entries.filter(e => e.id !== pendingDeleteId);
+    save();
+    pendingDeleteId = null;
+    closeDeleteModal();
+    renderHistory();
+    updateUI();
+    showToast('Deleted');
+  }
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  pendingDeleteId = null;
+}
+
+// ── Views ──
 function showView(v) {
-  const formEl = document.getElementById('formView');
-  const histEl = document.getElementById('historyView');
-  const navF = document.getElementById('navForm');
-  const navH = document.getElementById('navHistory');
+  ['formView', 'chartsView', 'historyView'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  ['navForm', 'navCharts', 'navHistory'].forEach(id => document.getElementById(id).classList.remove('active'));
 
   if (v === 'form') {
-    formEl.classList.remove('hidden');
-    histEl.classList.add('hidden');
-    navF.classList.add('active');
-    navH.classList.remove('active');
+    document.getElementById('formView').classList.remove('hidden');
+    document.getElementById('navForm').classList.add('active');
+  } else if (v === 'charts') {
+    document.getElementById('chartsView').classList.remove('hidden');
+    document.getElementById('navCharts').classList.add('active');
+    renderCharts();
   } else {
-    formEl.classList.add('hidden');
-    histEl.classList.remove('hidden');
-    navF.classList.remove('active');
-    navH.classList.add('active');
+    document.getElementById('historyView').classList.remove('hidden');
+    document.getElementById('navHistory').classList.add('active');
     renderHistory();
   }
 }
 
+// ── History ──
 function renderHistory() {
   const wrap = document.getElementById('historyView');
-
   if (entries.length === 0) {
-    wrap.innerHTML = `
-      <div class="empty-state">
-        <p class="empty-emoji">📋</p>
-        <p class="empty-text">No entries yet</p>
-        <p class="empty-sub">Tap "Check In" to log your first day</p>
-      </div>`;
+    wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">No entries yet</div><div class="empty-sub">Tap Check In to log your first day</div></div>';
     return;
   }
 
-  const ptsdColor = (level) => {
-    if (level === 'None') return '#6b7280';
-    if (level === 'Minor') return '#eab308';
-    if (level === 'Moderate') return '#f97316';
-    return '#ef4444';
-  };
-
+  const ptsdColor = l => ({ None: 'var(--text-muted)', Minor: 'var(--yellow)', Moderate: 'var(--orange)', Severe: 'var(--red)' }[l] || 'var(--text-muted)');
   let html = '';
   const sorted = [...entries].reverse();
-  sorted.forEach(entry => {
+
+  sorted.forEach((entry, i) => {
     const m = MOODS[entry.mood - 1];
     const dateStr = new Date(entry.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-    const doseColor = entry.doseTaken ? '#22c55e' : '#ef4444';
-    const doseText = entry.doseTaken ? '✓ Taken' : '✗ Missed';
+    const fxList = entry.sideEffects || [];
 
-    html += `<div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-day-num">Day ${entry.day}</div>
-          <div class="card-date">${dateStr}</div>
-        </div>
-        <div class="card-mood">${m ? m.emoji : '?'}</div>
+    html += `<div class="history-card" style="animation-delay: ${i * 0.04}s">
+      <div class="hc-top">
+        <div><div class="hc-day">Day ${entry.day}</div><div class="hc-date">${dateStr}</div></div>
+        <div class="hc-mood">${m ? m.emoji : '?'}</div>
       </div>
-      <div class="card-body">
-        <div class="card-row">
-          <span class="card-label">Dose</span>
-          <span class="card-value" style="color:${doseColor}">${doseText}</span>
-        </div>
-        ${entry.physical ? `<div class="card-row"><span class="card-label">Physical</span><span class="card-value">${escHtml(entry.physical)}</span></div>` : ''}
-        <div class="card-row">
-          <span class="card-label">PTSD</span>
-          <span class="card-value" style="color:${ptsdColor(entry.ptsd)}">${entry.ptsd}</span>
-        </div>
-        ${entry.fever ? `<div class="card-row"><span class="card-label">Fever</span><span class="card-value" style="color:#ef4444">🌡️ Yes</span></div>` : ''}
-        ${entry.notes ? `<div class="card-notes">${escHtml(entry.notes)}</div>` : ''}
+      <div class="hc-pills">
+        <span class="hc-pill ${entry.doseTaken ? 'dose-yes' : 'dose-no'}">${entry.doseTaken ? '✓ Taken' : '✗ Missed'}</span>
+        ${entry.ptsd && entry.ptsd !== 'None' ? `<span class="hc-pill ptsd">${entry.ptsd}</span>` : ''}
+        ${entry.fever ? '<span class="hc-pill fever">🌡️ Fever</span>' : ''}
+        ${fxList.map(f => `<span class="hc-pill fx">${f}</span>`).join('')}
       </div>
-      <div class="card-actions">
-        <button class="edit-btn" onclick="editEntry(${entry.id})">✏️ Edit</button>
-        <button class="delete-btn" onclick="deleteEntry(${entry.id})">🗑️</button>
+      ${entry.physical ? `<div class="hc-notes">${escHtml(entry.physical)}</div>` : ''}
+      ${entry.notes ? `<div class="hc-notes">${escHtml(entry.notes)}</div>` : ''}
+      <div class="hc-actions">
+        <button class="hc-btn" onclick="editEntry(${entry.id})">✏️ Edit</button>
+        <button class="hc-btn" onclick="requestDelete(${entry.id})">🗑️</button>
       </div>
     </div>`;
   });
@@ -719,33 +1266,195 @@ function renderHistory() {
   wrap.innerHTML = html;
 }
 
-function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
+// ── Charts ──
+function setChartRange(days, btnEl) {
+  chartRange = days;
+  document.querySelectorAll('.chart-range-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  renderCharts();
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+function renderCharts() {
+  renderMoodChart();
+  renderFxBars();
 }
 
-function exportData() {
-  if (entries.length === 0) {
-    showToast('No entries to export');
+function renderMoodChart() {
+  const canvas = document.getElementById('moodChart');
+  const empty = document.getElementById('chartEmpty');
+  const data = chartRange === 0 ? [...entries] : entries.slice(-chartRange);
+
+  if (data.length < 2) {
+    canvas.style.display = 'none';
+    empty.classList.remove('hidden');
     return;
   }
-  const data = JSON.stringify(entries, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
+  canvas.style.display = 'block';
+  empty.classList.add('hidden');
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const W = rect.width - 24;
+  const H = 160;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const padL = 28, padR = 12, padT = 16, padB = 28;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 5; i++) {
+    const y = padT + plotH - ((i - 1) / 4) * plotH;
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+  }
+
+  // Y labels
+  ctx.font = '10px "Space Mono"';
+  ctx.fillStyle = '#4a4a5e';
+  ctx.textAlign = 'right';
+  MOODS.forEach((m, i) => {
+    const y = padT + plotH - (i / 4) * plotH;
+    ctx.fillText(m.emoji, padL - 6, y + 4);
+  });
+
+  // Plot points
+  const points = data.map((e, i) => ({
+    x: padL + (i / (data.length - 1)) * plotW,
+    y: padT + plotH - ((e.mood - 1) / 4) * plotH,
+    mood: e.mood,
+    dose: e.doseTaken,
+    day: e.day
+  }));
+
+  // Area fill
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+  grad.addColorStop(0, 'rgba(108, 99, 255, 0.12)');
+  grad.addColorStop(1, 'rgba(108, 99, 255, 0.0)');
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, padT + plotH);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length - 1].x, padT + plotH);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1], curr = points[i];
+    const cpx = (prev.x + curr.x) / 2;
+    ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
+  }
+  ctx.strokeStyle = '#6c63ff';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Dots
+  points.forEach(p => {
+    const c = MOODS[p.mood - 1];
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = c.color;
+    ctx.fill();
+    // Missed dose indicator
+    if (!p.dose) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  });
+
+  // X labels (first, mid, last)
+  ctx.font = '10px "Space Mono"';
+  ctx.fillStyle = '#4a4a5e';
+  ctx.textAlign = 'center';
+  [0, Math.floor(data.length / 2), data.length - 1].forEach(i => {
+    if (data[i]) {
+      ctx.fillText('D' + data[i].day, points[i].x, H - 6);
+    }
+  });
+}
+
+function renderFxBars() {
+  const wrap = document.getElementById('fxBars');
+  const empty = document.getElementById('fxEmpty');
+
+  // Count all side effects
+  const counts = {};
+  entries.forEach(e => {
+    (e.sideEffects || []).forEach(fx => {
+      counts[fx] = (counts[fx] || 0) + 1;
+    });
+  });
+
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  if (sorted.length === 0) {
+    wrap.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const max = sorted[0][1];
+  wrap.innerHTML = sorted.map(([name, count]) => {
+    const pct = Math.round((count / max) * 100);
+    return `<div class="fx-bar-item">
+      <span class="fx-bar-name">${name}</span>
+      <div class="fx-bar-track"><div class="fx-bar-fill" style="width: ${pct}%"></div></div>
+      <span class="fx-bar-count">${count}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Export / Import ──
+function exportJSON() {
+  if (entries.length === 0) { showToast('No entries to export'); return; }
+  downloadFile(JSON.stringify(entries, null, 2), 'med-tracker-' + isoDate() + '.json', 'application/json');
+  showToast('JSON exported ✓');
+}
+
+function exportCSV() {
+  if (entries.length === 0) { showToast('No entries to export'); return; }
+  const headers = ['Day', 'Date', 'Mood', 'Mood Label', 'Dose Taken', 'Side Effects', 'Physical', 'PTSD', 'Fever', 'Notes'];
+  const rows = entries.map(e => {
+    const m = MOODS[e.mood - 1];
+    return [
+      e.day,
+      new Date(e.date).toLocaleDateString('en-GB'),
+      e.mood,
+      m ? m.label : '',
+      e.doseTaken ? 'Yes' : 'No',
+      (e.sideEffects || []).join('; '),
+      csvEsc(e.physical || ''),
+      e.ptsd || 'None',
+      e.fever ? 'Yes' : 'No',
+      csvEsc(e.notes || '')
+    ].join(',');
+  });
+  downloadFile(headers.join(',') + '\n' + rows.join('\n'), 'med-tracker-' + isoDate() + '.csv', 'text/csv');
+  showToast('CSV exported ✓');
+}
+
+function downloadFile(content, name, type) {
+  const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = 'med-tracker-backup-' + new Date().toISOString().slice(0,10) + '.json';
-  a.click();
+  a.href = url; a.download = name; a.click();
   URL.revokeObjectURL(url);
-  showToast('Backup saved ✓');
 }
 
 function importData(event) {
@@ -757,12 +1466,10 @@ function importData(event) {
       const imported = JSON.parse(e.target.result);
       if (!Array.isArray(imported)) throw new Error('Bad format');
       entries = imported;
+      entries.forEach(e => { if (!e.sideEffects) e.sideEffects = []; });
       entries.sort((a, b) => a.day - b.day);
       save();
       updateUI();
-      if (document.getElementById('historyView').classList.contains('hidden') === false) {
-        renderHistory();
-      }
       showToast('Imported ' + entries.length + ' entries ✓');
     } catch(err) {
       showToast('Import failed — bad file');
@@ -770,6 +1477,18 @@ function importData(event) {
   };
   reader.readAsText(file);
   event.target.value = '';
+}
+
+// ── Helpers ──
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function csvEsc(s) { return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s; }
+function isoDate() { return new Date().toISOString().slice(0, 10); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 init();
