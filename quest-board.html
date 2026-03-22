@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#101848">
+<title>Hero's Quest Board</title>
+<style>
+:root{
+  --bg:#101848;--bg2:#0c1240;--border-o:#f8f0e0;--border-i:#c8b878;--border-d:#485090;
+  --text:#f8f8f8;--dim:#a0a8d0;--gold:#f8d848;--blue:#68c0f8;--green:#68e868;--red:#f87070;
+  --gg:rgba(248,216,72,0.12);--font:'Courier New','Courier',monospace;
+  --common:#b0b8d0;--uncommon:#68e868;--rare:#68c0f8;--epic:#d088f8;--legendary:#f8d848;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);font-family:var(--font);max-width:480px;margin:0 auto;padding:0 0 80px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.dq{position:relative;background:linear-gradient(180deg,#182058,#101848);border:3px solid var(--border-o);border-radius:10px;padding:14px;box-shadow:inset 0 0 0 2px var(--border-d),0 4px 16px rgba(0,0,0,.3)}
+.dq::before{content:'';position:absolute;inset:2px;border:1px solid var(--border-i);border-radius:7px;pointer-events:none}
+
+/* Header */
+.hdr{display:flex;align-items:center;gap:10px;padding:14px 16px 8px}
+.hdr-creature{width:36px;height:36px;cursor:pointer;animation:float 3s ease-in-out infinite}
+.hdr-creature svg{width:100%;height:100%}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.hdr-info{flex:1}
+.hdr-name{font-size:14px;font-weight:bold;color:var(--gold);letter-spacing:1px}
+.hdr-class{font-size:10px;color:var(--dim)}
+.hdr-lvl{font-size:11px;font-weight:bold;color:var(--gold);background:var(--gg);border:1px solid rgba(240,216,96,.2);padding:4px 10px;border-radius:12px}
+
+/* EXP bar */
+.exp-bar{margin:0 16px 4px;height:10px;background:rgba(0,0,0,.25);border:1px solid var(--border-d);border-radius:2px;overflow:hidden;position:relative}
+.exp-fill{height:100%;background:linear-gradient(90deg,#4040d0,#58a8f8,#58d858);transition:width .6s;border-radius:2px}
+.exp-text{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;color:rgba(255,255,255,.7);text-shadow:0 0 4px rgba(0,0,0,.8)}
+
+/* Gold display */
+.gold-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 16px 8px}
+.gold-coin{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe880,#d4a820);border:1px solid var(--border-d);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;color:var(--border-d)}
+.gold-amt{font-size:14px;font-weight:bold;color:var(--gold)}
+
+/* Nav */
+.nav{display:flex;gap:3px;padding:0 12px 10px}
+.nav-btn{flex:1;padding:8px 2px;border:2px solid var(--border-d);border-radius:4px;background:linear-gradient(180deg,#182058,#101848);color:var(--dim);font-family:var(--font);font-size:9px;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;transition:all .15s;text-align:center}
+.nav-btn.active{background:var(--gg);border-color:var(--border-o);color:var(--gold)}
+
+/* Sections */
+.sec{padding:0 12px;position:relative;z-index:1}
+.hidden{display:none!important}
+
+/* ── QUESTS TAB ── */
+.quest-card{margin-bottom:8px;padding:12px;display:flex;align-items:center;gap:10px}
+.quest-check{width:32px;height:32px;border-radius:8px;border:2px solid var(--border-d);background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
+.quest-check.done{border-color:var(--green);background:rgba(88,216,88,.1)}
+.quest-check.maxed{border-color:var(--dim);background:rgba(120,120,160,.05);opacity:.5;cursor:default}
+.quest-body{flex:1;min-width:0}
+.quest-name{font-size:13px;font-weight:bold;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quest-meta{font-size:10px;color:var(--dim);margin-top:2px}
+.quest-meta .xp{color:var(--blue)}
+.quest-meta .gp{color:var(--gold)}
+.quest-count{font-size:10px;color:var(--dim);margin-top:1px}
+.quest-del{padding:4px 8px;border:1px solid var(--border-d);border-radius:3px;background:transparent;color:var(--dim);font-family:var(--font);font-size:10px;cursor:pointer;flex-shrink:0}
+
+.add-quest-btn{width:100%;padding:12px;border:2px dashed var(--border-d);border-radius:8px;background:transparent;color:var(--dim);font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;transition:all .2s}
+.add-quest-btn:active{border-color:var(--border-i);color:var(--gold)}
+
+/* ── HERO TAB ── */
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.hero-stat{padding:12px;text-align:center}
+.hs-val{font-size:22px;font-weight:bold;color:var(--gold)}
+.hs-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+.class-progression{margin-bottom:12px}
+.cp-title{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.cp-list{display:flex;flex-wrap:wrap;gap:4px}
+.cp-badge{padding:4px 8px;border-radius:3px;border:1px solid var(--border-d);font-size:10px;font-weight:bold;color:var(--dim)}
+.cp-badge.achieved{border-color:var(--green);color:var(--green);background:rgba(88,216,88,.08)}
+.cp-badge.current{border-color:var(--gold);color:var(--gold);background:var(--gg)}
+
+/* ── SHOP TAB ── */
+.shop-cats{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap}
+.shop-cat{padding:5px 10px;border:1px solid var(--border-d);border-radius:3px;background:transparent;color:var(--dim);font-family:var(--font);font-size:9px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+.shop-cat.active{border-color:var(--border-i);color:var(--gold);background:var(--gg)}
+
+.shop-item{margin-bottom:6px;padding:10px;display:flex;align-items:center;gap:10px}
+.si-icon{font-size:22px;flex-shrink:0;width:32px;text-align:center}
+.si-info{flex:1;min-width:0}
+.si-name{font-size:12px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si-desc{font-size:9px;color:var(--dim);margin-top:1px;line-height:1.3}
+.si-rarity{font-size:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px}
+.si-buy{padding:5px 10px;border:2px solid var(--border-i);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:10px;font-weight:bold;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.si-buy:disabled{opacity:.3;cursor:not-allowed}
+.si-buy.owned{border-color:var(--green);color:var(--green);background:rgba(88,216,88,.08)}
+
+/* ── TREASURY TAB ── */
+.treasury-stats{display:flex;gap:8px;margin-bottom:10px}
+.ts-pill{flex:1;text-align:center;padding:8px 4px;background:linear-gradient(180deg,#182058,#101848);border:1px solid var(--border-d);border-radius:4px}
+.ts-val{font-size:16px;font-weight:bold;color:var(--gold)}
+.ts-label{font-size:8px;color:var(--dim);text-transform:uppercase}
+
+.treasury-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.tg-item{aspect-ratio:1;border:2px solid var(--border-d);border-radius:6px;background:linear-gradient(180deg,#182058,#101848);display:flex;align-items:center;justify-content:center;font-size:22px;position:relative;transition:all .15s}
+.tg-item.empty{opacity:.2;font-size:14px}
+.tg-item.owned{border-color:var(--border-i)}
+.tg-item .tg-rarity{position:absolute;bottom:1px;right:2px;width:5px;height:5px;border-radius:50%}
+
+/* ── LOOT LOG ── */
+.loot-entry{margin-bottom:6px;padding:10px;display:flex;align-items:center;gap:8px}
+.le-icon{font-size:18px;flex-shrink:0}
+.le-text{font-size:11px;color:var(--text);flex:1}
+.le-text .hl{color:var(--gold)}
+.le-date{font-size:9px;color:var(--dim);flex-shrink:0}
+
+/* ── Overlays ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:flex;align-items:flex-end;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.open{opacity:1;pointer-events:auto}
+.overlay.center{align-items:center}
+.ov-box{max-width:440px;width:100%;padding:16px;margin-bottom:16px}
+
+.ov-label{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block}
+.ov-input{width:100%;padding:10px;border:2px solid var(--border-i);border-radius:4px;background:rgba(0,0,0,.2);color:var(--text);font-family:var(--font);font-size:14px;outline:none;margin-bottom:10px}
+.ov-input:focus{border-color:var(--border-o)}
+.ov-input::placeholder{color:#6068a0}
+.ov-row{display:flex;gap:8px;margin-bottom:10px}
+.ov-row .ov-field{flex:1}
+.ov-row .ov-field label{font-size:9px;color:var(--dim);display:block;margin-bottom:4px;text-transform:uppercase}
+.ov-row .ov-field input,.ov-row .ov-field select{width:100%;padding:8px;border:1px solid var(--border-d);border-radius:4px;background:linear-gradient(180deg,#182058,#101848);color:var(--text);font-family:var(--font);font-size:13px;outline:none}
+.ov-row .ov-field select{-webkit-appearance:none}
+.ov-btns{display:flex;gap:8px}
+.ov-btns button{flex:1;padding:10px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+.ov-save{border:2px solid var(--border-o);background:linear-gradient(180deg,#283880,#182058);color:var(--gold)}
+.ov-cancel{border:1px solid var(--border-d);background:transparent;color:var(--dim)}
+
+/* Level up overlay */
+.lvl-up-box{text-align:center;padding:24px}
+.lvl-up-icon{font-size:48px;margin-bottom:8px;animation:lvlPulse 1s ease-in-out infinite}
+@keyframes lvlPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.lvl-up-text{font-size:18px;font-weight:bold;color:var(--gold);text-shadow:0 0 16px rgba(240,216,96,.3);margin-bottom:4px}
+.lvl-up-class{font-size:13px;color:var(--text);margin-bottom:6px}
+.lvl-up-sub{font-size:11px;color:var(--dim);margin-bottom:16px;line-height:1.5}
+.lvl-up-btn{padding:12px 32px;border:2px solid var(--border-o);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:13px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+
+/* Loot drop overlay */
+.loot-box{text-align:center;padding:24px}
+.loot-icon{font-size:48px;margin-bottom:8px;animation:lootBounce .6s ease}
+@keyframes lootBounce{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.loot-text{font-size:14px;color:var(--text);margin-bottom:4px}
+.loot-name{font-size:16px;font-weight:bold;margin-bottom:4px}
+.loot-desc{font-size:11px;color:var(--dim);margin-bottom:14px;line-height:1.4}
+.loot-btn{padding:10px 28px;border:2px solid var(--border-o);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+
+/* Item detail overlay */
+.item-detail{text-align:center;padding:20px}
+.id-icon{font-size:48px;margin-bottom:6px}
+.id-name{font-size:16px;font-weight:bold;margin-bottom:4px}
+.id-rarity{font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.id-desc{font-size:12px;color:var(--dim);line-height:1.5;margin-bottom:14px}
+.id-close{padding:10px 28px;border:2px solid var(--border-o);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+
+/* Export */
+.export-bar{display:flex;gap:6px;padding:10px 12px}
+.export-btn{flex:1;padding:8px;border:1px solid var(--border-d);border-radius:4px;background:linear-gradient(180deg,#182058,#101848);color:var(--dim);font-family:var(--font);font-size:9px;font-weight:bold;cursor:pointer}
+
+/* Toast */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(16px);background:linear-gradient(180deg,#182058,#101848);border:2px solid var(--border-o);color:var(--gold);padding:8px 18px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:bold;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Particle container for level ups */
+.particle-overlay{position:fixed;inset:0;pointer-events:none;z-index:150}
+.lvl-particle{position:absolute;border-radius:50%;background:var(--gold);box-shadow:0 0 6px rgba(240,216,96,.5)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.quest-card,.shop-item,.loot-entry,.tg-item{animation:fadeUp .2s ease both}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-creature" id="creatureWrap" onclick="spawnCreature()"></div>
+  <div class="hdr-info">
+    <div class="hdr-name">Jimmy</div>
+    <div class="hdr-class" id="hdrClass">Lv.1 Slime</div>
+  </div>
+  <div class="hdr-lvl" id="hdrLvl">Lv.1</div>
+</div>
+<div class="exp-bar"><div class="exp-fill" id="expFill" style="width:0%"></div><div class="exp-text" id="expText">0 / 100 EXP</div></div>
+<div class="gold-bar"><div class="gold-coin">G</div><div class="gold-amt" id="goldAmt">0 G</div></div>
+
+<!-- Nav -->
+<div class="nav">
+  <button class="nav-btn active" id="navQuests" onclick="showTab('quests')">⚔️ Quests</button>
+  <button class="nav-btn" id="navHero" onclick="showTab('hero')">🛡️ Hero</button>
+  <button class="nav-btn" id="navShop" onclick="showTab('shop')">🏪 Shop</button>
+  <button class="nav-btn" id="navTreasury" onclick="showTab('treasury')">👑 Loot</button>
+  <button class="nav-btn" id="navLootlog" onclick="showTab('lootlog')">📜 Log</button>
+</div>
+
+<!-- QUESTS -->
+<div class="sec" id="secQuests">
+  <div id="questList"></div>
+  <button class="add-quest-btn" onclick="showAddQuest()">+ Add New Quest</button>
+</div>
+
+<!-- HERO -->
+<div class="sec hidden" id="secHero">
+  <div class="hero-stats" id="heroStats"></div>
+  <div class="class-progression"><div class="cp-title">Class Progression</div><div class="cp-list" id="classList"></div></div>
+</div>
+
+<!-- SHOP -->
+<div class="sec hidden" id="secShop">
+  <div class="shop-cats" id="shopCats"></div>
+  <div id="shopList"></div>
+</div>
+
+<!-- TREASURY -->
+<div class="sec hidden" id="secTreasury">
+  <div class="treasury-stats" id="treasuryStats"></div>
+  <div class="treasury-grid" id="treasuryGrid"></div>
+</div>
+
+<!-- LOOT LOG -->
+<div class="sec hidden" id="secLootlog">
+  <div id="lootLogList"></div>
+</div>
+
+<!-- Export -->
+<div class="export-bar">
+  <button class="export-btn" onclick="exportJSON()">Export</button>
+  <button class="export-btn" onclick="document.getElementById('importFile').click()">Import</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+  <button class="export-btn" onclick="if(confirm('Reset ALL data?')){localStorage.removeItem(SK);location.reload()}">Reset</button>
+</div>
+
+<!-- Add Quest overlay -->
+<div class="overlay" id="addQuestOv">
+  <div class="ov-box dq">
+    <div class="ov-label">New Quest</div>
+    <input class="ov-input" id="qName" placeholder="Quest name..." maxlength="50">
+    <div class="ov-row">
+      <div class="ov-field"><label>EXP</label><input type="number" id="qExp" value="10" min="1" max="500"></div>
+      <div class="ov-field"><label>Gold</label><input type="number" id="qGold" value="5" min="0" max="500"></div>
+    </div>
+    <div class="ov-row">
+      <div class="ov-field"><label>Type</label>
+        <select id="qType"><option value="daily">Once Daily</option><option value="repeat">Repeatable</option></select>
+      </div>
+      <div class="ov-field"><label>Max/Day (repeat)</label><input type="number" id="qMax" value="0" min="0" max="99" placeholder="0=unlimited"></div>
+    </div>
+    <div class="ov-btns">
+      <button class="ov-cancel" onclick="closeOv('addQuestOv')">Cancel</button>
+      <button class="ov-save" onclick="saveQuest()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Level Up overlay -->
+<div class="overlay center" id="lvlUpOv">
+  <div class="ov-box dq lvl-up-box">
+    <div class="lvl-up-icon">⚔️</div>
+    <div class="lvl-up-text" id="lvlUpText">Level Up!</div>
+    <div class="lvl-up-class" id="lvlUpClass"></div>
+    <div class="lvl-up-sub" id="lvlUpSub"></div>
+    <button class="lvl-up-btn" onclick="closeOv('lvlUpOv')">Huzzah!</button>
+  </div>
+</div>
+
+<!-- Loot Drop overlay -->
+<div class="overlay center" id="lootOv">
+  <div class="ov-box dq loot-box">
+    <div class="loot-icon" id="lootIcon"></div>
+    <div class="loot-text">A treasure chest appears!</div>
+    <div class="loot-name" id="lootName"></div>
+    <div class="loot-desc" id="lootDesc"></div>
+    <button class="loot-btn" onclick="closeOv('lootOv')">Claim!</button>
+  </div>
+</div>
+
+<!-- Item Detail overlay -->
+<div class="overlay center" id="itemOv">
+  <div class="ov-box dq item-detail">
+    <div class="id-icon" id="idIcon"></div>
+    <div class="id-name" id="idName"></div>
+    <div class="id-rarity" id="idRarity"></div>
+    <div class="id-desc" id="idDesc"></div>
+    <button class="id-close" onclick="closeOv('itemOv')">Close</button>
+  </div>
+</div>
+
+<div class="particle-overlay" id="particleOv"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+
+const CLASSES=[
+  {name:'Slime',lvl:1},{name:'She-Slime',lvl:3},{name:'Dracky',lvl:5},{name:'Chimaera',lvl:8},
+  {name:'Healslime',lvl:10},{name:'Golem',lvl:13},{name:'Mimic',lvl:16},{name:'Restless Armour',lvl:19},
+  {name:'Knight Errant',lvl:22},{name:'Minstrel',lvl:25},{name:'Warrior',lvl:28},{name:'Mage',lvl:31},
+  {name:'Priest',lvl:34},{name:'Thief',lvl:37},{name:'Ranger',lvl:40},{name:'Armamentalist',lvl:43},
+  {name:'Paladin',lvl:46},{name:'Sage',lvl:49},{name:'Gladiator',lvl:52},{name:'Hero',lvl:55},
+  {name:'Erdrick',lvl:60},{name:'Zenithian',lvl:70},{name:'Rubiss',lvl:80},{name:'Grandmaster',lvl:99}
+];
+
+function expForLevel(l){return Math.floor(80*(l**1.5));}
+
+// ── COLLECTIBLES CATALOGUE ──
+const ITEMS=[
+// ═══ MONSTERS (30) ═══
+{id:'m01',name:'Slime',icon:'🟦',cat:'monsters',rarity:'common',price:20,desc:'The most iconic monster. Gooey and harmless... mostly.'},
+{id:'m02',name:'She-Slime',icon:'🩷',cat:'monsters',rarity:'common',price:25,desc:'A slime of distinguished taste and pinkish hue.'},
+{id:'m03',name:'Metal Slime',icon:'⬜',cat:'monsters',rarity:'rare',price:200,desc:'Worth a fortune in EXP. Good luck catching one.'},
+{id:'m04',name:'Dracky',icon:'🦇',cat:'monsters',rarity:'common',price:30,desc:'A cheerful bat creature. Fangs are just for show.'},
+{id:'m05',name:'Chimaera',icon:'🐦',cat:'monsters',rarity:'uncommon',price:60,desc:'Half bird, half beast. Delivers the post in some regions.'},
+{id:'m06',name:'Golem',icon:'🗿',cat:'monsters',rarity:'uncommon',price:80,desc:'Built from clay and ancient magic. Very patient.'},
+{id:'m07',name:'Healslime',icon:'💚',cat:'monsters',rarity:'uncommon',price:70,desc:'A benevolent slime that heals instead of harms.'},
+{id:'m08',name:'King Slime',icon:'👑',cat:'monsters',rarity:'rare',price:250,desc:'Royalty among slimes. Wears the crown well.'},
+{id:'m09',name:'Liquid Metal Slime',icon:'🪩',cat:'monsters',rarity:'epic',price:500,desc:'Even rarer than metal slimes. Legends speak of them.'},
+{id:'m10',name:'Dragonlord',icon:'🐉',cat:'monsters',rarity:'legendary',price:1500,desc:'The ultimate evil. Ruler of all monsters.'},
+{id:'m11',name:'Restless Armour',icon:'🛡️',cat:'monsters',rarity:'uncommon',price:65,desc:'An enchanted suit of armour that fights on its own.'},
+{id:'m12',name:'Mimic',icon:'📦',cat:'monsters',rarity:'uncommon',price:75,desc:'Looks like a treasure chest. Very much is not.'},
+{id:'m13',name:'Skeleton',icon:'💀',cat:'monsters',rarity:'common',price:35,desc:'All bones, no flesh, still tries its best.'},
+{id:'m14',name:'Ghost',icon:'👻',cat:'monsters',rarity:'common',price:30,desc:'Spooky but mostly just lonely.'},
+{id:'m15',name:'Hammerhood',icon:'🔨',cat:'monsters',rarity:'uncommon',price:55,desc:'Carries a massive hammer. Surprisingly polite.'},
+{id:'m16',name:'Troll',icon:'👹',cat:'monsters',rarity:'uncommon',price:90,desc:'Big, green, and not great at conversation.'},
+{id:'m17',name:'Baramos',icon:'😈',cat:'monsters',rarity:'epic',price:800,desc:'A demon lord of terrible power. Mind the tentacles.'},
+{id:'m18',name:'Zoma',icon:'🌑',cat:'monsters',rarity:'legendary',price:2000,desc:'The Archfiend. Master of darkness itself.'},
+{id:'m19',name:'Estark',icon:'⚫',cat:'monsters',rarity:'legendary',price:1800,desc:'Lord of the Underworld. Sleeps for centuries.'},
+{id:'m20',name:'Bubble Slime',icon:'🫧',cat:'monsters',rarity:'common',price:25,desc:'A slime made of bubbles. Pop goes the monster.'},
+{id:'m21',name:'Slime Knight',icon:'🐴',cat:'monsters',rarity:'uncommon',price:85,desc:'A slime riding a knight. Or the other way round.'},
+{id:'m22',name:'Sabrecat',icon:'🐯',cat:'monsters',rarity:'uncommon',price:95,desc:'Fast, fierce, and rideable. Every hero wants one.'},
+{id:'m23',name:'Wyvern',icon:'🪽',cat:'monsters',rarity:'rare',price:180,desc:'A dragon that never quite made it to full size.'},
+{id:'m24',name:'Jailcat',icon:'🐱',cat:'monsters',rarity:'common',price:28,desc:'A feline felon. Steals fish and hearts.'},
+{id:'m25',name:'Goodybag',icon:'🎒',cat:'monsters',rarity:'uncommon',price:65,desc:'A walking sack of loot. Chase it!'},
+{id:'m26',name:'Killing Machine',icon:'🤖',cat:'monsters',rarity:'rare',price:220,desc:'A mechanical nightmare. Hits twice per turn.'},
+{id:'m27',name:'Great Dragon',icon:'🔥',cat:'monsters',rarity:'epic',price:650,desc:'An ancient wyrm of devastating power.'},
+{id:'m28',name:'Metal King Slime',icon:'💠',cat:'monsters',rarity:'legendary',price:2500,desc:'The holiest of grails. The rarest of slimes.'},
+{id:'m29',name:'Dullahan',icon:'🗡️',cat:'monsters',rarity:'rare',price:190,desc:'A headless knight. Still fights remarkably well.'},
+{id:'m30',name:'Orgodemir',icon:'🕳️',cat:'monsters',rarity:'legendary',price:3000,desc:'The Demon King from DQ7. Pitiful mortals, indeed.'},
+{id:'m31',name:'Mortamor',icon:'💀',cat:'monsters',rarity:'legendary',price:2800,desc:'Deathtamoor himself. Destroyer of worlds.'},
+{id:'m32',name:'Dhoulmagus',icon:'🃏',cat:'monsters',rarity:'epic',price:900,desc:'The jester who became a nightmare. DQ8\'s first shock.'},
+{id:'m33',name:'Gracos',icon:'🐙',cat:'monsters',rarity:'rare',price:200,desc:'An octopus lord who hoards tablet fragments.'},
+{id:'m34',name:'Hacksaurus',icon:'🦖',cat:'monsters',rarity:'uncommon',price:70,desc:'A dinosaur with an axe. Nature finds a way.'},
+{id:'m35',name:'Powie Yowie',icon:'❄️',cat:'monsters',rarity:'common',price:35,desc:'A fluffy yeti. Maribel once used one as a decoy.'},
+
+// ═══ WEAPONS (20) ═══
+{id:'w01',name:'Cypress Stick',icon:'🪵',cat:'weapons',rarity:'common',price:10,desc:'Every hero starts somewhere. Usually here.'},
+{id:'w02',name:'Copper Sword',icon:'🗡️',cat:'weapons',rarity:'common',price:30,desc:'A decent starter blade. Gets the job done.'},
+{id:'w03',name:'Steel Broadsword',icon:'⚔️',cat:'weapons',rarity:'uncommon',price:80,desc:'A warrior\'s reliable companion.'},
+{id:'w04',name:'Zombiesbane',icon:'🔪',cat:'weapons',rarity:'uncommon',price:100,desc:'Especially effective against the undead.'},
+{id:'w05',name:'Dragon Slayer',icon:'🐲',cat:'weapons',rarity:'rare',price:300,desc:'Forged specifically for hunting dragons.'},
+{id:'w06',name:'Miracle Sword',icon:'✨',cat:'weapons',rarity:'rare',price:400,desc:'Heals the wielder with each strike.'},
+{id:'w07',name:'Falcon Blade',icon:'🦅',cat:'weapons',rarity:'rare',price:350,desc:'Strikes twice in a single swing.'},
+{id:'w08',name:'Metal King Sword',icon:'👑',cat:'weapons',rarity:'epic',price:900,desc:'The finest blade in the known world.'},
+{id:'w09',name:'Erdrick\'s Sword',icon:'⚡',cat:'weapons',rarity:'legendary',price:2500,desc:'The legendary hero\'s sacred weapon.'},
+{id:'w10',name:'Uber Falcon Blade',icon:'💫',cat:'weapons',rarity:'epic',price:700,desc:'Four strikes. Four chances to be awesome.'},
+{id:'w11',name:'Boomerang',icon:'🪃',cat:'weapons',rarity:'common',price:35,desc:'Hits all enemies. Comes back to you. Usually.'},
+{id:'w12',name:'Iron Axe',icon:'🪓',cat:'weapons',rarity:'common',price:40,desc:'Heavy, brutal, effective. No finesse required.'},
+{id:'w13',name:'Wizard\'s Staff',icon:'🪄',cat:'weapons',rarity:'uncommon',price:90,desc:'Channels magical energy. Doubles as a walking stick.'},
+{id:'w14',name:'Flametang Boomerang',icon:'🔥',cat:'weapons',rarity:'uncommon',price:120,desc:'A boomerang wreathed in fire. Spicy.'},
+{id:'w15',name:'Bastard Sword',icon:'⚔️',cat:'weapons',rarity:'uncommon',price:110,desc:'Two-handed destruction. Compensating for something?'},
+{id:'w16',name:'Blizzard Blade',icon:'❄️',cat:'weapons',rarity:'rare',price:320,desc:'Flash-freezes anything it touches.'},
+{id:'w17',name:'Orichalcum Fangs',icon:'🦷',cat:'weapons',rarity:'epic',price:800,desc:'Claws forged from the rarest metal alive.'},
+{id:'w18',name:'Hela\'s Hammer',icon:'🔨',cat:'weapons',rarity:'epic',price:850,desc:'The weapon of a death goddess. Hits like a truck.'},
+{id:'w19',name:'Gringham Whip',icon:'🪢',cat:'weapons',rarity:'legendary',price:2200,desc:'The ultimate whip. Hits all foes with devastating force.'},
+{id:'w20',name:'Zenithian Sword',icon:'🌟',cat:'weapons',rarity:'legendary',price:3000,desc:'Forged in Zenithia. Cleaves evil asunder.'},
+
+// ═══ ARMOUR (20) ═══
+{id:'a01',name:'Plain Clothes',icon:'👕',cat:'armour',rarity:'common',price:5,desc:'Just a shirt. Offers moral support.'},
+{id:'a02',name:'Leather Armour',icon:'🦺',cat:'armour',rarity:'common',price:25,desc:'Better than nothing. Smells like cattle.'},
+{id:'a03',name:'Iron Armour',icon:'🪖',cat:'armour',rarity:'uncommon',price:80,desc:'Sturdy protection. A bit heavy for jogging.'},
+{id:'a04',name:'Magic Armour',icon:'🔮',cat:'armour',rarity:'uncommon',price:120,desc:'Enchanted to resist magical attacks.'},
+{id:'a05',name:'Dragon Mail',icon:'🐉',cat:'armour',rarity:'rare',price:300,desc:'Made from dragon scales. Fireproof.'},
+{id:'a06',name:'Metal King Armour',icon:'⬛',cat:'armour',rarity:'epic',price:1000,desc:'Nearly indestructible. Very shiny.'},
+{id:'a07',name:'Erdrick\'s Armour',icon:'🌟',cat:'armour',rarity:'legendary',price:2500,desc:'Worn by the legendary hero himself.'},
+{id:'a08',name:'Angel\'s Robe',icon:'😇',cat:'armour',rarity:'rare',price:350,desc:'Blessed garments that heal over time.'},
+{id:'a09',name:'Leather Shield',icon:'🛡️',cat:'armour',rarity:'common',price:15,desc:'A round shield. Blocks some things some of the time.'},
+{id:'a10',name:'Iron Shield',icon:'🛡️',cat:'armour',rarity:'common',price:40,desc:'Reliable and sturdy. The grunt\'s favourite.'},
+{id:'a11',name:'Magic Shield',icon:'🛡️',cat:'armour',rarity:'uncommon',price:100,desc:'Absorbs magical attacks. Tingles slightly.'},
+{id:'a12',name:'Ogre Shield',icon:'🛡️',cat:'armour',rarity:'rare',price:280,desc:'Massive and near-impervious. Arm day every day.'},
+{id:'a13',name:'Leather Hat',icon:'🎩',cat:'armour',rarity:'common',price:10,desc:'A basic hat. Keeps the sun off.'},
+{id:'a14',name:'Iron Helmet',icon:'⛑️',cat:'armour',rarity:'uncommon',price:65,desc:'Protects the noggin. Looks imposing.'},
+{id:'a15',name:'Mythril Helm',icon:'⛑️',cat:'armour',rarity:'rare',price:240,desc:'Light as a feather, strong as a fortress.'},
+{id:'a16',name:'Metal King Helm',icon:'⛑️',cat:'armour',rarity:'epic',price:900,desc:'The ultimate headgear. Impenetrable.'},
+{id:'a17',name:'Fur Coat',icon:'🧥',cat:'armour',rarity:'common',price:30,desc:'Warm and fuzzy. Great for cold dungeons.'},
+{id:'a18',name:'Silver Mail',icon:'🪙',cat:'armour',rarity:'uncommon',price:130,desc:'Gleaming silver armour. Undead hate it.'},
+{id:'a19',name:'Gigant Armour',icon:'💪',cat:'armour',rarity:'epic',price:750,desc:'Forged for giants. Somehow fits you.'},
+{id:'a20',name:'Zenithian Armour',icon:'✨',cat:'armour',rarity:'legendary',price:3000,desc:'Armour of the Zenithian hero. Divine protection.'},
+
+// ═══ ITEMS (20) ═══
+{id:'i01',name:'Medicinal Herb',icon:'🌿',cat:'items',rarity:'common',price:8,desc:'A staple of every adventurer\'s pack.'},
+{id:'i02',name:'Antidotal Herb',icon:'🍃',cat:'items',rarity:'common',price:10,desc:'Cures poison. Tastes terrible.'},
+{id:'i03',name:'Chimaera Wing',icon:'🪶',cat:'items',rarity:'common',price:15,desc:'Teleports you to a previously visited town.'},
+{id:'i04',name:'Magic Water',icon:'💧',cat:'items',rarity:'uncommon',price:40,desc:'Restores magical power. Fizzy.'},
+{id:'i05',name:'Elfin Elixir',icon:'🧪',cat:'items',rarity:'rare',price:200,desc:'Fully restores MP. Extremely rare.'},
+{id:'i06',name:'Yggdrasil Leaf',icon:'🍂',cat:'items',rarity:'epic',price:600,desc:'Can revive the fallen. Handle with care.'},
+{id:'i07',name:'Sage\'s Stone',icon:'💎',cat:'items',rarity:'legendary',price:3000,desc:'Heals the entire party. A true treasure.'},
+{id:'i08',name:'Mini Medal',icon:'🎖️',cat:'items',rarity:'uncommon',price:50,desc:'Collectible medals hidden across the world.'},
+{id:'i09',name:'Seed of Strength',icon:'💪',cat:'items',rarity:'uncommon',price:60,desc:'Permanently increases attack power.'},
+{id:'i10',name:'Seed of Wisdom',icon:'🧠',cat:'items',rarity:'uncommon',price:60,desc:'Permanently increases magical might.'},
+{id:'i11',name:'Lucky Pendant',icon:'🍀',cat:'items',rarity:'rare',price:250,desc:'Increases luck. Results may vary.'},
+{id:'i12',name:'Gold Bar',icon:'🪙',cat:'items',rarity:'rare',price:300,desc:'Pure gold. Worth a fortune. You bought it with... gold.'},
+{id:'i13',name:'Holy Water',icon:'💦',cat:'items',rarity:'common',price:12,desc:'Wards off weak monsters. Temporarily.'},
+{id:'i14',name:'Seed of Agility',icon:'💨',cat:'items',rarity:'uncommon',price:60,desc:'Permanently increases speed. Zoom zoom.'},
+{id:'i15',name:'Seed of Resilience',icon:'🛡️',cat:'items',rarity:'uncommon',price:60,desc:'Permanently increases defence. Thick skin.'},
+{id:'i16',name:'Yggdrasil Dew',icon:'✨',cat:'items',rarity:'legendary',price:3500,desc:'Dew from the World Tree. Revives and heals all.'},
+{id:'i17',name:'Amor Seco',icon:'🌵',cat:'items',rarity:'uncommon',price:45,desc:'A dry desert herb. Cures curses.'},
+{id:'i18',name:'Moonwort Bulb',icon:'🌛',cat:'items',rarity:'common',price:20,desc:'Cures paralysis. Glows in moonlight.'},
+{id:'i19',name:'Seed of Life',icon:'❤️',cat:'items',rarity:'rare',price:180,desc:'Permanently increases HP. Precious.'},
+{id:'i20',name:'Reset Stone',icon:'🔄',cat:'items',rarity:'epic',price:500,desc:'Resets all skill points. Second chances do exist.'},
+
+// ═══ TREASURES (20) ═══
+{id:'t01',name:'Pretty Pebble',icon:'🪨',cat:'treasures',rarity:'common',price:5,desc:'Smooth and pleasant to hold.'},
+{id:'t02',name:'Sparkly Shell',icon:'🐚',cat:'treasures',rarity:'common',price:10,desc:'Found on a distant beach. Smells like the sea.'},
+{id:'t03',name:'Starry Night Gem',icon:'🌙',cat:'treasures',rarity:'uncommon',price:80,desc:'Captures the beauty of the night sky.'},
+{id:'t04',name:'Ruby of Protection',icon:'❤️',cat:'treasures',rarity:'rare',price:250,desc:'Glows warm in the presence of friends.'},
+{id:'t05',name:'Orichalcum',icon:'🔶',cat:'treasures',rarity:'epic',price:800,desc:'The rarest metal in existence. Indestructible.'},
+{id:'t06',name:'Zenithian Helm',icon:'⛑️',cat:'treasures',rarity:'legendary',price:2000,desc:'Headgear of the Zenithian hero. Radiates divine power.'},
+{id:'t07',name:'Goddess Ring',icon:'💍',cat:'treasures',rarity:'legendary',price:3500,desc:'A ring blessed by the Goddess herself.'},
+{id:'t08',name:'Lump of Iron',icon:'🧲',cat:'treasures',rarity:'common',price:15,desc:'Heavy. Useful for crafting... eventually.'},
+{id:'t09',name:'Dragon Scale',icon:'🪭',cat:'treasures',rarity:'uncommon',price:70,desc:'Shed by a powerful dragon. Still warm.'},
+{id:'t10',name:'Saint\'s Ashes',icon:'🏺',cat:'treasures',rarity:'rare',price:200,desc:'Sacred remains with purifying power.'},
+{id:'t11',name:'Crystal Ball',icon:'🔮',cat:'treasures',rarity:'rare',price:280,desc:'See the future. Maybe. Sometimes.'},
+{id:'t12',name:'Moonstone',icon:'🌕',cat:'treasures',rarity:'uncommon',price:90,desc:'Glows softly in the dark. Comforting.'},
+{id:'t13',name:'Glass Slipper',icon:'👠',cat:'treasures',rarity:'uncommon',price:75,desc:'Fits only one foot. Who knows whose.'},
+{id:'t14',name:'Old Coin',icon:'🪙',cat:'treasures',rarity:'common',price:12,desc:'From a lost civilisation. Worth more in sentiment.'},
+{id:'t15',name:'Emerald',icon:'💚',cat:'treasures',rarity:'rare',price:220,desc:'Deep green and flawless. Mesmerising.'},
+{id:'t16',name:'Kran Spinel',icon:'💎',cat:'treasures',rarity:'epic',price:700,desc:'One of the legendary Kran Spinels from DQ8.'},
+{id:'t17',name:'Venus\' Tear',icon:'💧',cat:'treasures',rarity:'epic',price:650,desc:'A gemstone that weeps. Beautiful and eerie.'},
+{id:'t18',name:'Sun Crown',icon:'☀️',cat:'treasures',rarity:'legendary',price:2800,desc:'A crown that radiates sunlight. Blindingly gorgeous.'},
+{id:'t19',name:'Rusty Sword',icon:'🗡️',cat:'treasures',rarity:'common',price:8,desc:'Could be anything under that rust. Probably nothing.'},
+{id:'t20',name:'Treasure Map',icon:'🗺️',cat:'treasures',rarity:'uncommon',price:55,desc:'Leads to a grotto. Or a dead end. Adventure either way.'},
+
+// ═══ FOOD (25) ═══
+{id:'f01',name:'Plain Cheese',icon:'🧀',cat:'food',rarity:'common',price:8,desc:'Simple but satisfying. A tavern staple.'},
+{id:'f02',name:'Fresh Bread',icon:'🍞',cat:'food',rarity:'common',price:5,desc:'Warm from the oven. Smells like home.'},
+{id:'f03',name:'Cooked Steak',icon:'🥩',cat:'food',rarity:'uncommon',price:40,desc:'A thick cut, perfectly seared. Restores morale.'},
+{id:'f04',name:'Fish Supper',icon:'🐟',cat:'food',rarity:'common',price:15,desc:'Freshly caught. Pairs well with chips.'},
+{id:'f05',name:'Hearty Stew',icon:'🍲',cat:'food',rarity:'uncommon',price:35,desc:'Bubbling with vegetables and mystery meat.'},
+{id:'f06',name:'Roast Chicken',icon:'🍗',cat:'food',rarity:'uncommon',price:45,desc:'Golden, crispy, magnificent. Inn-keeper\'s special.'},
+{id:'f07',name:'Amor Cake',icon:'🍰',cat:'food',rarity:'uncommon',price:50,desc:'A sweet cake from the town of Amor. Cures heartache.'},
+{id:'f08',name:'Royal Feast',icon:'🦃',cat:'food',rarity:'rare',price:200,desc:'A meal fit for King Pavan himself.'},
+{id:'f09',name:'Slime Jelly',icon:'🟦',cat:'food',rarity:'common',price:12,desc:'Wobbles ominously. Tastes... blue.'},
+{id:'f10',name:'Monster Munchies',icon:'🍪',cat:'food',rarity:'common',price:10,desc:'Makes monsters friendlier. Works on Sabrecats.'},
+{id:'f11',name:'Cream of Mushroom',icon:'🍄',cat:'food',rarity:'common',price:18,desc:'Made with wild forest mushrooms. Probably safe.'},
+{id:'f12',name:'Dragon Dung',icon:'💩',cat:'food',rarity:'common',price:3,desc:'Not actually food. Why is this here?'},
+{id:'f13',name:'Fresh Milk',icon:'🥛',cat:'food',rarity:'common',price:8,desc:'From a well-treated cow. Nutritious.'},
+{id:'f14',name:'Apple Pie',icon:'🥧',cat:'food',rarity:'uncommon',price:30,desc:'Grandma\'s recipe. +10 to nostalgia.'},
+{id:'f15',name:'Elfin Candy',icon:'🍬',cat:'food',rarity:'rare',price:150,desc:'Made by actual elves. Otherworldly sweetness.'},
+{id:'f16',name:'Goddess Nectar',icon:'🍷',cat:'food',rarity:'legendary',price:2000,desc:'Wine of the divine. One sip heals all wounds.'},
+{id:'f17',name:'Pumpkin Soup',icon:'🎃',cat:'food',rarity:'uncommon',price:25,desc:'Served every autumn in Alltrades Abbey.'},
+{id:'f18',name:'Spicy Curry',icon:'🍛',cat:'food',rarity:'uncommon',price:35,desc:'Yangus\'s favourite. Burns on the way in AND out.'},
+{id:'f19',name:'Zenithian Wine',icon:'🍾',cat:'food',rarity:'epic',price:600,desc:'Aged in the clouds. Each sip tastes like starlight.'},
+{id:'f20',name:'Festival Dango',icon:'🍡',cat:'food',rarity:'common',price:10,desc:'Sweet rice dumplings from a village festival.'},
+{id:'f21',name:'Grilled Sabrecat',icon:'🐯',cat:'food',rarity:'rare',price:180,desc:'Don\'t tell PETA. Or the Sabrecats.'},
+{id:'f22',name:'Magic Mushroom',icon:'🍄',cat:'food',rarity:'rare',price:160,desc:'Restores MP and makes colours more vivid.'},
+{id:'f23',name:'Hero\'s Breakfast',icon:'🍳',cat:'food',rarity:'uncommon',price:45,desc:'Full English. Sausage, bacon, eggs, the lot.'},
+{id:'f24',name:'Traveller\'s Jerky',icon:'🥓',cat:'food',rarity:'common',price:12,desc:'Dried meat for the road. Chewy but reliable.'},
+{id:'f25',name:'Birthday Cake',icon:'🎂',cat:'food',rarity:'epic',price:500,desc:'For a very special occasion. Wish upon it.'},
+
+// ═══ SPELLS (25) ═══
+{id:'s01',name:'Heal',icon:'💖',cat:'spells',rarity:'common',price:15,desc:'Restores a small amount of HP. The bread and butter.'},
+{id:'s02',name:'Midheal',icon:'💗',cat:'spells',rarity:'uncommon',price:50,desc:'Stronger healing magic. Reliable in a pinch.'},
+{id:'s03',name:'Fullheal',icon:'💝',cat:'spells',rarity:'rare',price:200,desc:'Completely restores one ally\'s HP. Essential.'},
+{id:'s04',name:'Omniheal',icon:'💞',cat:'spells',rarity:'legendary',price:2500,desc:'Heals the entire party to full. The ultimate cure.'},
+{id:'s05',name:'Frizz',icon:'🔥',cat:'spells',rarity:'common',price:12,desc:'A small fireball. Everyone starts somewhere.'},
+{id:'s06',name:'Frizzle',icon:'🔥',cat:'spells',rarity:'uncommon',price:55,desc:'A bigger fireball. Getting warmer.'},
+{id:'s07',name:'Kafrizz',icon:'🌋',cat:'spells',rarity:'rare',price:220,desc:'An enormous fireball that incinerates all it touches.'},
+{id:'s08',name:'Sizz',icon:'☀️',cat:'spells',rarity:'common',price:18,desc:'A line of fire. Hits a group of enemies.'},
+{id:'s09',name:'Kasizz',icon:'🌞',cat:'spells',rarity:'rare',price:180,desc:'A devastating wall of flame.'},
+{id:'s10',name:'Crack',icon:'❄️',cat:'spells',rarity:'common',price:15,desc:'Sharp shards of ice. Cold comfort for enemies.'},
+{id:'s11',name:'Kacrack',icon:'🧊',cat:'spells',rarity:'rare',price:200,desc:'A blizzard of razor-sharp ice crystals.'},
+{id:'s12',name:'Woosh',icon:'🌪️',cat:'spells',rarity:'common',price:14,desc:'A gust of cutting wind.'},
+{id:'s13',name:'Kaswoosh',icon:'🌀',cat:'spells',rarity:'rare',price:190,desc:'A tornado that tears through everything.'},
+{id:'s14',name:'Zap',icon:'⚡',cat:'spells',rarity:'uncommon',price:60,desc:'A bolt of lightning from above.'},
+{id:'s15',name:'Kazap',icon:'🌩️',cat:'spells',rarity:'epic',price:500,desc:'A storm of holy lightning. The hero\'s signature.'},
+{id:'s16',name:'Bang',icon:'💥',cat:'spells',rarity:'uncommon',price:45,desc:'An explosion of magical energy.'},
+{id:'s17',name:'Kaboom',icon:'🎆',cat:'spells',rarity:'epic',price:600,desc:'The mother of all explosions. Stand well back.'},
+{id:'s18',name:'Zoom',icon:'💨',cat:'spells',rarity:'uncommon',price:40,desc:'Teleports the party to any visited town. Handy.'},
+{id:'s19',name:'Evac',icon:'🏃',cat:'spells',rarity:'common',price:20,desc:'Escape from dungeons instantly. No shame in it.'},
+{id:'s20',name:'Kazing',icon:'⭐',cat:'spells',rarity:'epic',price:800,desc:'Revives a fallen ally to full health. Miraculous.'},
+{id:'s21',name:'Zing',icon:'🌟',cat:'spells',rarity:'uncommon',price:80,desc:'Attempts to revive a fallen ally. 50/50 odds.'},
+{id:'s22',name:'Buff',icon:'🛡️',cat:'spells',rarity:'common',price:15,desc:'Raises defence. Every little helps.'},
+{id:'s23',name:'Oomph',icon:'💪',cat:'spells',rarity:'uncommon',price:55,desc:'Doubles attack power. Hit twice as hard.'},
+{id:'s24',name:'Hocus Pocus',icon:'🎰',cat:'spells',rarity:'rare',price:250,desc:'Totally random effect. Could be anything. ANYTHING.'},
+{id:'s25',name:'Magic Burst',icon:'🌈',cat:'spells',rarity:'legendary',price:3500,desc:'Dumps ALL your MP into one cataclysmic blast. The nuclear option.'},
+];
+
+const CATS=['monsters','weapons','armour','items','treasures','food','spells'];
+const RARITY_COLOR={common:'var(--common)',uncommon:'var(--green)',rare:'var(--blue)',epic:'var(--epic)',legendary:'var(--gold)'};
+const LOOT_CHANCE=0.25;
+
+const CREATURES=[{name:'Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="csg" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#6DD8FF"/><stop offset="40%" stop-color="#2EA8E0"/><stop offset="100%" stop-color="#145F8A"/></radialGradient></defs><path d="M50 6C50 6,42 18,30 32C18 46,10 58,10 68C10 82,22 95,50 95C78 95,90 82,90 68C90 58,82 46,70 32C58 18,50 6,50 6Z" fill="url(#csg)"/><ellipse cx="38" cy="62" rx="7" ry="8" fill="#fff"/><ellipse cx="39.5" cy="62.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="62" cy="62" rx="7" ry="8" fill="#fff"/><ellipse cx="63.5" cy="62.5" rx="3.5" ry="4" fill="#1A1A2E"/><path d="M38 76Q42 83,50 84Q58 83,62 76" fill="none" stroke="#0E4A6A" stroke-width="2" stroke-linecap="round"/></svg>`},{name:'Dracky',svg:`<svg viewBox="0 0 130 100"><defs><radialGradient id="cdg" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5850A0"/><stop offset="100%" stop-color="#201840"/></radialGradient></defs><path d="M20 38L8 30Q3 40,10 48L18 52Z" fill="url(#cdg)"/><path d="M110 38L122 30Q127 40,120 48L112 52Z" fill="url(#cdg)"/><ellipse cx="65" cy="50" rx="26" ry="24" fill="url(#cdg)"/><ellipse cx="55" cy="46" rx="7" ry="7.5" fill="#fff"/><ellipse cx="56" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="75" cy="46" rx="7" ry="7.5" fill="#fff"/><ellipse cx="76" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><path d="M52 60Q58 70,65 70Q72 70,78 60" fill="#C06040"/></svg>`},{name:'King Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="ckg" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5CAEF0"/><stop offset="100%" stop-color="#103870"/></radialGradient><linearGradient id="ccr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE040"/><stop offset="100%" stop-color="#C89820"/></linearGradient></defs><ellipse cx="50" cy="68" rx="42" ry="28" fill="url(#ckg)"/><path d="M26 42L30 28L36 38L42 22L50 38L58 22L64 38L70 28L74 42Z" fill="url(#ccr)"/><rect x="26" y="40" width="48" height="7" rx="1" fill="url(#ccr)"/><circle cx="50" cy="43.5" r="2.8" fill="#C850C0"/><ellipse cx="40" cy="64" rx="6" ry="7" fill="#fff"/><ellipse cx="41" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><ellipse cx="60" cy="64" rx="6" ry="7" fill="#fff"/><ellipse cx="61" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><path d="M40 76Q50 82,60 76" fill="#D08070"/></svg>`}];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const SK='heros-quest-board';
+let G={level:1,exp:0,gold:0,quests:[],owned:[],lootLog:[],questCompletions:{},shopCat:'monsters'};
+
+function loadState(){try{const r=localStorage.getItem(SK);if(r)G=Object.assign(G,JSON.parse(r));}catch(e){} if(!G.questCompletions)G.questCompletions={};}
+function saveState(){localStorage.setItem(SK,JSON.stringify(G));}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+function init(){
+  loadState();resetDailyCompletions();spawnCreature();updateAll();renderQuests();renderShop();
+}
+
+function resetDailyCompletions(){
+  const today=new Date().toDateString();
+  if(G._lastDay!==today){G.questCompletions={};G._lastDay=today;saveState();}
+}
+
+function spawnCreature(){
+  const c=CREATURES[Math.floor(Math.random()*CREATURES.length)];
+  document.getElementById('creatureWrap').innerHTML=c.svg;
+}
+
+// ═══════════════════════════════════════
+// UPDATE UI
+// ═══════════════════════════════════════
+function updateAll(){
+  const cls=getClass();
+  document.getElementById('hdrClass').textContent='Lv.'+G.level+' '+cls.name;
+  document.getElementById('hdrLvl').textContent='Lv.'+G.level;
+  const needed=expForLevel(G.level+1);
+  const prev=expForLevel(G.level);
+  const pct=Math.min(100,((G.exp-prev)/(needed-prev))*100);
+  document.getElementById('expFill').style.width=pct+'%';
+  document.getElementById('expText').textContent=G.exp+' / '+needed+' EXP';
+  document.getElementById('goldAmt').textContent=G.gold+' G';
+}
+
+function getClass(){
+  let cls=CLASSES[0];
+  for(const c of CLASSES){if(G.level>=c.lvl)cls=c;}
+  return cls;
+}
+
+// ═══════════════════════════════════════
+// QUESTS
+// ═══════════════════════════════════════
+function renderQuests(){
+  const wrap=document.getElementById('questList');
+  if(!G.quests.length){wrap.innerHTML='<div style="text-align:center;padding:24px;font-size:12px;color:var(--dim)">No quests yet! Add some above.</div>';return;}
+  const today=new Date().toDateString();
+  let html='';
+  G.quests.forEach((q,i)=>{
+    const key=q.id+'_'+today;
+    const count=G.questCompletions[key]||0;
+    const maxed=(q.type==='daily'&&count>=1)||(q.type==='repeat'&&q.max>0&&count>=q.max);
+    const checkClass=maxed?'done maxed':count>0?'done':'';
+    const countText=q.type==='repeat'?(q.max>0?count+'/'+q.max:count+'×'):(count>0?'✓':'');
+    html+=`<div class="quest-card dq" style="animation-delay:${i*.03}s"><div class="quest-check ${checkClass}" ${maxed?'':`onclick="completeQuest(${i})"`}>${maxed?'✓':count>0?'✓':'○'}</div><div class="quest-body"><div class="quest-name">${esc(q.name)}</div><div class="quest-meta"><span class="xp">+${q.exp} EXP</span> · <span class="gp">+${q.gold} G</span> · ${q.type==='daily'?'Once daily':'Repeatable'}</div>${countText?`<div class="quest-count">${countText}</div>`:''}</div><button class="quest-del" onclick="deleteQuest(${i})">✕</button></div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+function showAddQuest(){openOv('addQuestOv');document.getElementById('qName').value='';document.getElementById('qName').focus();}
+
+function saveQuest(){
+  const name=document.getElementById('qName').value.trim();
+  if(!name){toast('Name thy quest!');return;}
+  G.quests.push({id:Date.now(),name,exp:parseInt(document.getElementById('qExp').value)||10,gold:parseInt(document.getElementById('qGold').value)||5,type:document.getElementById('qType').value,max:parseInt(document.getElementById('qMax').value)||0});
+  saveState();renderQuests();closeOv('addQuestOv');toast('Quest added!');
+}
+
+function deleteQuest(i){G.quests.splice(i,1);saveState();renderQuests();}
+
+function completeQuest(i){
+  const q=G.quests[i];
+  const today=new Date().toDateString();
+  const key=q.id+'_'+today;
+  const count=G.questCompletions[key]||0;
+  if(q.type==='daily'&&count>=1)return;
+  if(q.type==='repeat'&&q.max>0&&count>=q.max)return;
+
+  G.questCompletions[key]=count+1;
+  G.exp+=q.exp;
+  G.gold+=q.gold;
+
+  // Check level up
+  let leveled=false;
+  while(G.exp>=expForLevel(G.level+1)&&G.level<99){
+    G.level++;leveled=true;
+  }
+
+  saveState();updateAll();renderQuests();
+
+  if(leveled)showLevelUp();
+
+  // Loot roll
+  if(Math.random()<LOOT_CHANCE){
+    setTimeout(()=>rollLoot(),leveled?1500:400);
+  } else {
+    toast('+'+q.exp+' EXP, +'+q.gold+' G');
+  }
+}
+
+// ═══════════════════════════════════════
+// LEVEL UP
+// ═══════════════════════════════════════
+function showLevelUp(){
+  const cls=getClass();
+  document.getElementById('lvlUpText').textContent='Level '+G.level+'!';
+  document.getElementById('lvlUpClass').textContent=cls.name;
+  document.getElementById('lvlUpSub').textContent='Jimmy has grown stronger!\nThe quest continues...';
+  openOv('lvlUpOv');
+  burstParticles();
+}
+
+function burstParticles(){
+  const c=document.getElementById('particleOv');
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');p.className='lvl-particle';
+    const x=20+Math.random()*60;
+    p.style.left=x+'%';p.style.top='50%';
+    const s=3+Math.random()*5;p.style.width=s+'px';p.style.height=s+'px';
+    const dx=(Math.random()-.5)*200;const dy=-100-Math.random()*200;
+    p.animate([{opacity:0,transform:'translate(0,0) scale(0)'},{opacity:1,transform:`translate(${dx*.3}px,${dy*.3}px) scale(1)`,offset:.2},{opacity:.5,transform:`translate(${dx*.7}px,${dy*.7}px) scale(.8)`,offset:.7},{opacity:0,transform:`translate(${dx}px,${dy}px) scale(.2)`}],{duration:800+Math.random()*600,easing:'ease-out',fill:'forwards',delay:Math.random()*300});
+    c.appendChild(p);setTimeout(()=>p.remove(),2000);
+  }
+}
+
+// ═══════════════════════════════════════
+// LOOT
+// ═══════════════════════════════════════
+function rollLoot(){
+  // Weight by rarity
+  const weights={common:50,uncommon:30,rare:14,epic:5,legendary:1};
+  const pool=[];
+  ITEMS.forEach(item=>{
+    if(!G.owned.includes(item.id)){
+      const w=weights[item.rarity]||1;
+      for(let i=0;i<w;i++)pool.push(item);
+    }
+  });
+  if(!pool.length)return;// All owned!
+
+  const item=pool[Math.floor(Math.random()*pool.length)];
+  G.owned.push(item.id);
+  G.lootLog.unshift({itemId:item.id,date:new Date().toISOString()});
+  if(G.lootLog.length>100)G.lootLog.length=100;
+  saveState();
+
+  document.getElementById('lootIcon').textContent=item.icon;
+  document.getElementById('lootName').textContent=item.name;
+  document.getElementById('lootName').style.color=RARITY_COLOR[item.rarity];
+  document.getElementById('lootDesc').textContent=item.desc;
+  openOv('lootOv');
+}
+
+// ═══════════════════════════════════════
+// SHOP
+// ═══════════════════════════════════════
+function renderShopCats(){
+  const wrap=document.getElementById('shopCats');
+  wrap.innerHTML=CATS.map(c=>`<button class="shop-cat ${G.shopCat===c?'active':''}" onclick="G.shopCat='${c}';renderShop()">${c}</button>`).join('');
+}
+
+function renderShop(){
+  renderShopCats();
+  const wrap=document.getElementById('shopList');
+  const items=ITEMS.filter(i=>i.cat===G.shopCat);
+  let html='';
+  items.forEach((item,i)=>{
+    const owned=G.owned.includes(item.id);
+    const canAfford=G.gold>=item.price;
+    html+=`<div class="shop-item dq" style="animation-delay:${i*.02}s"><div class="si-icon">${item.icon}</div><div class="si-info"><div class="si-name" style="color:${RARITY_COLOR[item.rarity]}">${item.name}</div><div class="si-desc">${item.desc}</div><div class="si-rarity" style="color:${RARITY_COLOR[item.rarity]}">${item.rarity}</div></div>${owned?`<button class="si-buy owned" disabled>Owned</button>`:`<button class="si-buy" ${canAfford?`onclick="buyItem('${item.id}')"`:'disabled'}>${item.price} G</button>`}</div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+function buyItem(id){
+  const item=ITEMS.find(i=>i.id===id);
+  if(!item||G.gold<item.price||G.owned.includes(id))return;
+  G.gold-=item.price;
+  G.owned.push(id);
+  G.lootLog.unshift({itemId:id,date:new Date().toISOString(),bought:true});
+  if(G.lootLog.length>100)G.lootLog.length=100;
+  saveState();updateAll();renderShop();
+  toast('Purchased '+item.name+'!');
+}
+
+// ═══════════════════════════════════════
+// HERO TAB
+// ═══════════════════════════════════════
+function renderHero(){
+  const totalQuests=Object.values(G.questCompletions).reduce((s,v)=>s+v,0);
+  document.getElementById('heroStats').innerHTML=`
+    <div class="hero-stat dq"><div class="hs-val">${G.level}</div><div class="hs-label">Level</div></div>
+    <div class="hero-stat dq"><div class="hs-val">${G.exp}</div><div class="hs-label">Total EXP</div></div>
+    <div class="hero-stat dq"><div class="hs-val">${G.gold} G</div><div class="hs-label">Gold</div></div>
+    <div class="hero-stat dq"><div class="hs-val">${G.owned.length}/${ITEMS.length}</div><div class="hs-label">Collection</div></div>
+  `;
+  const wrap=document.getElementById('classList');
+  wrap.innerHTML=CLASSES.map(c=>{
+    const achieved=G.level>=c.lvl;
+    const current=getClass().name===c.name;
+    return`<div class="cp-badge ${current?'current':achieved?'achieved':''}">${c.name} (${c.lvl})</div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// TREASURY
+// ═══════════════════════════════════════
+function renderTreasury(){
+  const owned=G.owned.length;
+  const total=ITEMS.length;
+  const byCat={};CATS.forEach(c=>byCat[c]={owned:0,total:0});
+  ITEMS.forEach(i=>{byCat[i.cat].total++;if(G.owned.includes(i.id))byCat[i.cat].owned++;});
+
+  document.getElementById('treasuryStats').innerHTML=`
+    <div class="ts-pill"><div class="ts-val">${owned}/${total}</div><div class="ts-label">Collected</div></div>
+    <div class="ts-pill"><div class="ts-val">${Math.round(owned/total*100)}%</div><div class="ts-label">Complete</div></div>
+  `;
+
+  const grid=document.getElementById('treasuryGrid');
+  let html='';
+  ITEMS.forEach((item,i)=>{
+    const has=G.owned.includes(item.id);
+    html+=`<div class="tg-item ${has?'owned':'empty'}" style="animation-delay:${i*.01}s" ${has?`onclick="showItemDetail('${item.id}')"`:''}>${has?item.icon:'?'}<div class="tg-rarity" style="background:${RARITY_COLOR[item.rarity]}"></div></div>`;
+  });
+  grid.innerHTML=html;
+}
+
+function showItemDetail(id){
+  const item=ITEMS.find(i=>i.id===id);
+  if(!item)return;
+  document.getElementById('idIcon').textContent=item.icon;
+  document.getElementById('idName').textContent=item.name;
+  document.getElementById('idRarity').textContent=item.rarity;
+  document.getElementById('idRarity').style.color=RARITY_COLOR[item.rarity];
+  document.getElementById('idDesc').textContent=item.desc;
+  openOv('itemOv');
+}
+
+// ═══════════════════════════════════════
+// LOOT LOG
+// ═══════════════════════════════════════
+function renderLootLog(){
+  const wrap=document.getElementById('lootLogList');
+  if(!G.lootLog.length){wrap.innerHTML='<div style="text-align:center;padding:24px;font-size:12px;color:var(--dim)">No loot yet. Complete quests!</div>';return;}
+  let html='';
+  G.lootLog.slice(0,50).forEach((entry,i)=>{
+    const item=ITEMS.find(x=>x.id===entry.itemId);
+    if(!item)return;
+    const d=new Date(entry.date);
+    const dateStr=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    const verb=entry.bought?'Purchased':'Found';
+    html+=`<div class="loot-entry dq" style="animation-delay:${i*.02}s"><div class="le-icon">${item.icon}</div><div class="le-text">${verb} <span class="hl">${item.name}</span></div><div class="le-date">${dateStr}</div></div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+// ═══════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════
+function showTab(t){
+  ['Quests','Hero','Shop','Treasury','Lootlog'].forEach(n=>{
+    document.getElementById('sec'+n).classList.add('hidden');
+    document.getElementById('nav'+n).classList.remove('active');
+  });
+  const cap=t.charAt(0).toUpperCase()+t.slice(1);
+  document.getElementById('sec'+cap).classList.remove('hidden');
+  document.getElementById('nav'+cap).classList.add('active');
+  if(t==='hero')renderHero();
+  if(t==='shop')renderShop();
+  if(t==='treasury')renderTreasury();
+  if(t==='lootlog')renderLootLog();
+}
+
+// ═══════════════════════════════════════
+// OVERLAYS & HELPERS
+// ═══════════════════════════════════════
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function exportJSON(){
+  if(!G.quests.length&&!G.owned.length){toast('Nothing to export');return;}
+  const b=new Blob([JSON.stringify(G,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='heros-quest-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);
+  toast('Exported!');
+}
+function importData(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){try{const imp=JSON.parse(e.target.result);G=Object.assign(G,imp);saveState();updateAll();renderQuests();renderShop();toast('Data loaded!');}catch(err){toast('Import failed');}};
+  reader.readAsText(file);event.target.value='';
+}
+
+init();
+</script>
+</body>
+</html>
