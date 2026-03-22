@@ -239,8 +239,9 @@ body{min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);f
     <div class="ov-label">New Quest</div>
     <input class="ov-input" id="qName" placeholder="Quest name..." maxlength="50">
     <div class="ov-row">
-      <div class="ov-field"><label>EXP</label><input type="number" id="qExp" value="10" min="1" max="500"></div>
-      <div class="ov-field"><label>Gold</label><input type="number" id="qGold" value="5" min="0" max="500"></div>
+      <div class="ov-field"><label>Difficulty</label>
+        <select id="qDiff"><option value="easy">Easy (5 EXP, 3 G)</option><option value="medium" selected>Medium (15 EXP, 8 G)</option><option value="hard">Hard (30 EXP, 15 G)</option></select>
+      </div>
     </div>
     <div class="ov-row">
       <div class="ov-field"><label>Type</label>
@@ -501,7 +502,10 @@ const CREATURES=[{name:'Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGrad
 const SK='heros-quest-board';
 let G={level:1,exp:0,gold:0,quests:[],owned:[],lootLog:[],questCompletions:{},shopCat:'monsters'};
 
-function loadState(){try{const r=localStorage.getItem(SK);if(r)G=Object.assign(G,JSON.parse(r));}catch(e){} if(!G.questCompletions)G.questCompletions={};}
+function loadState(){try{const r=localStorage.getItem(SK);if(r)G=Object.assign(G,JSON.parse(r));}catch(e){} if(!G.questCompletions)G.questCompletions={};
+  // Migrate old quests that had manual exp/gold
+  G.quests.forEach(q=>{if(!q.diff){q.diff='medium';q.baseExp=q.exp||15;q.baseGold=q.gold||8;delete q.exp;delete q.gold;}});
+}
 function saveState(){localStorage.setItem(SK,JSON.stringify(G));}
 
 // ═══════════════════════════════════════
@@ -556,21 +560,52 @@ function renderQuests(){
     const maxed=(q.type==='daily'&&count>=1)||(q.type==='repeat'&&q.max>0&&count>=q.max);
     const checkClass=maxed?'done maxed':count>0?'done':'';
     const countText=q.type==='repeat'?(q.max>0?count+'/'+q.max:count+'×'):(count>0?'✓':'');
-    html+=`<div class="quest-card dq" style="animation-delay:${i*.03}s"><div class="quest-check ${checkClass}" ${maxed?'':`onclick="completeQuest(${i})"`}>${maxed?'✓':count>0?'✓':'○'}</div><div class="quest-body"><div class="quest-name">${esc(q.name)}</div><div class="quest-meta"><span class="xp">+${q.exp} EXP</span> · <span class="gp">+${q.gold} G</span> · ${q.type==='daily'?'Once daily':'Repeatable'}</div>${countText?`<div class="quest-count">${countText}</div>`:''}</div><button class="quest-del" onclick="deleteQuest(${i})">✕</button></div>`;
+    const rewards=calcRewards(q,count);
+    const diffLabel=DIFF_LABELS[q.diff]||'Medium';
+    const streakDays=getQuestStreak(q.id);
+    const streakText=streakDays>0?' 🔥'+streakDays:'';
+    html+=`<div class="quest-card dq" style="animation-delay:${i*.03}s"><div class="quest-check ${checkClass}" ${maxed?'':`onclick="completeQuest(${i})"`}>${maxed?'✓':count>0?'✓':'○'}</div><div class="quest-body"><div class="quest-name">${esc(q.name)}</div><div class="quest-meta"><span class="xp">+${rewards.exp} EXP</span> · <span class="gp">+${rewards.gold} G</span> · ${diffLabel}${streakText}</div>${countText?`<div class="quest-count">${countText}</div>`:''}</div><button class="quest-del" onclick="deleteQuest(${i})">✕</button></div>`;
   });
   wrap.innerHTML=html;
 }
 
 function showAddQuest(){openOv('addQuestOv');document.getElementById('qName').value='';document.getElementById('qName').focus();}
 
+const DIFF_TIERS={easy:{exp:5,gold:3},medium:{exp:15,gold:8},hard:{exp:30,gold:15}};
+const DIFF_LABELS={easy:'Easy',medium:'Medium',hard:'Hard'};
+
 function saveQuest(){
   const name=document.getElementById('qName').value.trim();
   if(!name){toast('Name thy quest!');return;}
-  G.quests.push({id:Date.now(),name,exp:parseInt(document.getElementById('qExp').value)||10,gold:parseInt(document.getElementById('qGold').value)||5,type:document.getElementById('qType').value,max:parseInt(document.getElementById('qMax').value)||0});
+  const diff=document.getElementById('qDiff').value;
+  const tier=DIFF_TIERS[diff];
+  G.quests.push({id:Date.now(),name,diff,baseExp:tier.exp,baseGold:tier.gold,type:document.getElementById('qType').value,max:parseInt(document.getElementById('qMax').value)||0});
   saveState();renderQuests();closeOv('addQuestOv');toast('Quest added!');
 }
 
 function deleteQuest(i){G.quests.splice(i,1);saveState();renderQuests();}
+
+function getQuestStreak(qId){
+  // Count consecutive days this quest was completed (not including today)
+  let streak=0;
+  const today=new Date();
+  for(let i=1;i<=365;i++){
+    const d=new Date(today);d.setDate(d.getDate()-i);
+    const key=qId+'_'+d.toDateString();
+    if(G.questCompletions[key]&&G.questCompletions[key]>0)streak++;
+    else break;
+  }
+  return streak;
+}
+
+function calcRewards(q,countToday){
+  const streak=Math.min(getQuestStreak(q.id),10);
+  let exp=q.baseExp+streak;
+  let gold=q.baseGold+streak;
+  // Repeatable: half rewards after first completion each day
+  if(q.type==='repeat'&&countToday>0){exp=Math.max(1,Math.floor(exp/2));gold=Math.max(1,Math.floor(gold/2));}
+  return{exp,gold,streak};
+}
 
 function completeQuest(i){
   const q=G.quests[i];
@@ -580,9 +615,10 @@ function completeQuest(i){
   if(q.type==='daily'&&count>=1)return;
   if(q.type==='repeat'&&q.max>0&&count>=q.max)return;
 
+  const rewards=calcRewards(q,count);
   G.questCompletions[key]=count+1;
-  G.exp+=q.exp;
-  G.gold+=q.gold;
+  G.exp+=rewards.exp;
+  G.gold+=rewards.gold;
 
   // Check level up
   let leveled=false;
@@ -598,7 +634,8 @@ function completeQuest(i){
   if(Math.random()<LOOT_CHANCE){
     setTimeout(()=>rollLoot(),leveled?1500:400);
   } else {
-    toast('+'+q.exp+' EXP, +'+q.gold+' G');
+    const streakTxt=rewards.streak>0?' (streak +'+rewards.streak+')':'';
+    toast('+'+rewards.exp+' EXP, +'+rewards.gold+' G'+streakTxt);
   }
 }
 
