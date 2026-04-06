@@ -5,60 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0a0818">
+<meta name="theme-color" content="#101848">
 <title>Adventure Log</title>
 <style>
 :root {
-  --bg: #0a0818;
-  --bg-window: #0d0a1e;
-  --border-outer: #f0e0a0;
-  --border-inner: #b89840;
-  --border-dark: #584810;
-  --text: #f0f0f0;
-  --text-dim: #8888aa;
-  --text-gold: #f0d860;
-  --text-blue: #58a8f8;
-  --gold-glow: rgba(240, 216, 96, 0.15);
-  --green: #58d858;
-  --red: #f06868;
-  --red-glow: rgba(240, 104, 104, 0.12);
+  --bg: #101848;
+  --bg-window: #142058;
+  --border-outer: #f8f0e0;
+  --border-inner: #c8b878;
+  --border-dark: #485090;
+  --text: #f8f8f8;
+  --text-dim: #a0a8d0;
+  --text-gold: #f8d848;
+  --text-blue: #68c0f8;
+  --gold-glow: rgba(248, 216, 72, 0.12);
+  --green: #68e868;
+  --red: #f87070;
+  --red-glow: rgba(248, 112, 112, 0.12);
   --font: 'Courier New', 'Courier', monospace;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { min-height: 100vh; min-height: 100dvh; background: var(--bg); color: var(--text); font-family: var(--font); max-width: 480px; margin: 0 auto; padding: 0 0 100px 0; -webkit-font-smoothing: antialiased; }
 .dq-window { position: relative; background: var(--bg-window); border: 3px solid var(--border-outer); border-radius: 8px; padding: 16px; box-shadow: inset 0 0 0 2px var(--border-dark), 0 0 20px rgba(240,216,96,0.06); }
 .dq-window::before { content: ''; position: absolute; inset: 2px; border: 1px solid var(--border-inner); border-radius: 5px; pointer-events: none; }
-.slime-wrap { display: flex; flex-direction: column; align-items: center; padding: 16px 0 0; cursor: pointer; }
-.slime-container { position: relative; width: 80px; height: 80px; animation: slimeBounce 2.5s ease-in-out infinite; }
-@keyframes slimeBounce { 0%,100%{transform:translateY(0) scaleY(1) scaleX(1)} 30%{transform:translateY(-8px) scaleY(1.05) scaleX(0.96)} 50%{transform:translateY(0) scaleY(0.93) scaleX(1.05)} 70%{transform:translateY(-3px) scaleY(1.02) scaleX(0.99)} }
-.slime-container svg { width: 100%; height: 100%; }
-.slime-shadow { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 50px; height: 8px; background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%); animation: shadowPulse 2.5s ease-in-out infinite; }
-@keyframes shadowPulse { 0%,100%{transform:translateX(-50%) scaleX(1);opacity:.6} 30%{transform:translateX(-50%) scaleX(.7);opacity:.3} 50%{transform:translateX(-50%) scaleX(1.1);opacity:.7} }
-.creature-name { font-size: 10px; font-weight: bold; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
-.header { text-align: center; padding: 4px 16px 12px; }
-.header h1 { font-size: 20px; color: var(--text-gold); letter-spacing: 2px; text-shadow: 0 0 10px rgba(240,216,96,0.3); text-transform: uppercase; }
-.header .sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 16px 4px; }
-.stat-card { text-align: center; background: var(--bg-window); border: 2px solid var(--border-dark); border-radius: 6px; padding: 10px 4px; }
-.stat-val { font-size: 20px; font-weight: bold; color: var(--text-gold); }
-.stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-.wisdom-box { margin: 0 16px 10px; padding: 12px; cursor: pointer; }
-.wisdom-label { font-size: 9px; color: var(--text-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-.wisdom-text { font-size: 12px; color: var(--text); line-height: 1.5; font-style: italic; }
-.wisdom-source { font-size: 10px; color: var(--text-dim); margin-top: 6px; }
-.wisdom-refresh { font-size: 9px; color: #404060; margin-top: 4px; }
+.header { display: flex; align-items: center; gap: 12px; padding: 20px 16px 8px; }
+.header-creature { width: 42px; height: 42px; flex-shrink: 0; cursor: pointer; animation: float 3s ease-in-out infinite; }
+.header-creature svg { width: 100%; height: 100%; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+.header-info { flex: 1; }
+.header-title { font-size: 17px; font-weight: bold; color: var(--text-gold); letter-spacing: 1.5px; }
+.header-date { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.stats-row { display: flex; gap: 0; padding: 0 16px 12px; font-size: 11px; color: var(--text-dim); }
+.stats-row span { margin-right: 14px; }
+.stats-row .num { color: var(--text-gold); font-weight: bold; }
+
 .nav { display: flex; gap: 4px; padding: 12px 16px; }
 .nav-btn { flex: 1; padding: 10px 4px; border: 2px solid var(--border-dark); border-radius: 4px; background: var(--bg-window); color: var(--text-dim); font-family: var(--font); font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.3px; transition: all 0.15s; }
 .nav-btn.active { background: var(--gold-glow); border-color: var(--border-outer); color: var(--text-gold); box-shadow: 0 0 10px rgba(240,216,96,0.1); }
 .nav-cnt { font-size: 9px; opacity: 0.7; }
 .section { padding: 0 16px; }
 .hidden { display: none !important; }
-textarea { width: 100%; padding: 14px; border: 2px solid var(--border-inner); border-radius: 4px; background: #0d0a1e; color: var(--text); font-family: var(--font); font-size: 14px; outline: none; resize: vertical; line-height: 1.7; transition: border-color 0.2s; }
+textarea { width: 100%; padding: 14px; border: 2px solid var(--border-inner); border-radius: 4px; background: var(--bg-window); color: var(--text); font-family: var(--font); font-size: 14px; outline: none; resize: vertical; line-height: 1.7; transition: border-color 0.2s; }
 textarea:focus { border-color: var(--border-outer); }
-textarea::placeholder { color: #404060; }
+textarea::placeholder { color: #6068a0; }
 .label { display: block; font-size: 11px; color: var(--text-gold); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
 .field { margin-bottom: 16px; }
-.submit-btn { width: 100%; padding: 14px; border: 2px solid var(--border-outer); border-radius: 4px; background: linear-gradient(180deg, #2a2050, #1a1030); color: var(--text-gold); font-family: var(--font); font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 16px rgba(240,216,96,0.08); transition: all 0.2s; }
+.submit-btn { width: 100%; padding: 14px; border: 2px solid var(--border-outer); border-radius: 4px; background: linear-gradient(180deg, #283880, #182058); color: var(--text-gold); font-family: var(--font); font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 16px rgba(240,216,96,0.08); transition: all 0.2s; }
 .submit-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
 .submit-btn:not(:disabled):active { transform: scale(0.97); }
 .cancel-btn { width: 100%; padding: 10px; border: 1px solid var(--border-dark); border-radius: 4px; background: transparent; color: var(--text-dim); font-family: var(--font); font-size: 12px; cursor: pointer; margin-top: 8px; display: none; }
@@ -68,20 +60,20 @@ textarea::placeholder { color: #404060; }
 .lc-entry-num { font-size: 12px; font-weight: bold; color: var(--text-gold); }
 .lc-date { font-size: 11px; color: var(--text-dim); }
 .lc-body { font-size: 13px; color: var(--text); line-height: 1.7; white-space: pre-wrap; word-wrap: break-word; }
-.lc-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px solid #1a1830; }
+.lc-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
 .lc-btn { padding: 4px 10px; border: 1px solid var(--border-dark); border-radius: 3px; background: transparent; color: var(--text-dim); font-family: var(--font); font-size: 11px; cursor: pointer; }
-.lc-btn:active { background: #1a1830; }
+.lc-btn:active { background: rgba(255,255,255,0.05); }
 .search-bar { margin-bottom: 12px; }
 .search-bar input { width: 100%; padding: 10px 12px; border: 2px solid var(--border-dark); border-radius: 4px; background: var(--bg-window); color: var(--text); font-family: var(--font); font-size: 12px; outline: none; }
 .search-bar input:focus { border-color: var(--border-inner); }
-.search-bar input::placeholder { color: #404060; }
+.search-bar input::placeholder { color: #6068a0; }
 .empty-state { text-align: center; padding: 36px 16px; }
 .empty-icon { font-size: 32px; margin-bottom: 8px; }
 .empty-text { font-size: 13px; color: var(--text-dim); }
-.empty-sub { font-size: 10px; color: #404060; margin-top: 4px; }
+.empty-sub { font-size: 10px; color: #6068a0; margin-top: 4px; }
 .export-bar { display: flex; gap: 6px; padding: 14px 16px; }
 .export-btn { flex: 1; padding: 9px; border: 1px solid var(--border-dark); border-radius: 4px; background: var(--bg-window); color: var(--text-dim); font-family: var(--font); font-size: 11px; font-weight: bold; cursor: pointer; }
-.export-btn:active { background: #1a1830; }
+.export-btn:active { background: rgba(255,255,255,0.05); }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .overlay.open { opacity: 1; pointer-events: auto; }
 .overlay-box { max-width: 320px; width: 100%; text-align: center; }
@@ -94,8 +86,7 @@ textarea::placeholder { color: #404060; }
 .success-text { font-size: 14px; color: var(--text); line-height: 1.7; text-align: left; margin-bottom: 14px; }
 .success-text .hl { color: var(--text-gold); }
 .success-text .gr { color: var(--green); }
-.success-quote { font-size: 11px; color: var(--text-dim); font-style: italic; line-height: 1.5; margin-bottom: 14px; text-align: left; border-left: 2px solid var(--border-dark); padding-left: 10px; }
-.btn-primary { width: 100%; padding: 12px; border: 2px solid var(--border-outer); border-radius: 4px; background: linear-gradient(180deg, #2a2050, #1a1030); color: var(--text-gold); font-family: var(--font); font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-primary { width: 100%; padding: 12px; border: 2px solid var(--border-outer); border-radius: 4px; background: linear-gradient(180deg, #283880, #182058); color: var(--text-gold); font-family: var(--font); font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg-window); border: 2px solid var(--border-outer); color: var(--text-gold); padding: 8px 18px; border-radius: 4px; font-family: var(--font); font-size: 13px; font-weight: bold; z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
@@ -103,22 +94,19 @@ textarea::placeholder { color: #404060; }
 </style>
 </head>
 <body>
-<div class="slime-wrap" onclick="spawnCreature()">
-  <div class="slime-container" id="creatureWrap"></div>
-  <div class="creature-name" id="creatureName"></div>
+<div class="header">
+  <div class="header-creature" id="creatureWrap" onclick="spawnCreature()"></div>
+  <div class="header-info">
+    <div class="header-title">Adventure Log</div>
+    <div class="header-date" id="dateText"></div>
+  </div>
 </div>
-<div class="header"><h1>Adventure Log</h1><div class="sub" id="dateText"></div></div>
-<div class="stats">
-  <div class="stat-card"><div class="stat-val" id="statEntries">0</div><div class="stat-label">Entries</div></div>
-  <div class="stat-card"><div class="stat-val" id="statStreak">0</div><div class="stat-label">Day Streak</div></div>
-  <div class="stat-card"><div class="stat-val" id="statWords">0</div><div class="stat-label">Words</div></div>
+<div class="stats-row">
+  <span><span class="num" id="statEntries">0</span> entries</span>
+  <span><span class="num" id="statStreak">0</span> day streak</span>
+  <span><span class="num" id="statWords">0</span> words</span>
 </div>
-<div class="wisdom-box dq-window" onclick="newWisdom()">
-  <div class="wisdom-label">📜 Words of Wisdom</div>
-  <div class="wisdom-text" id="wisdomText"></div>
-  <div class="wisdom-source" id="wisdomSource"></div>
-  <div class="wisdom-refresh">Tap for more wisdom</div>
-</div>
+
 <div class="nav">
   <button class="nav-btn active" id="navWrite" onclick="showView('write')">Write</button>
   <button class="nav-btn" id="navLog" onclick="showView('log')">Log <span class="nav-cnt" id="entryCount">0</span></button>
@@ -145,7 +133,6 @@ textarea::placeholder { color: #404060; }
 </div>
 <div class="overlay" id="successOverlay"><div class="overlay-box dq-window success-box">
   <div class="success-text" id="successText"></div>
-  <div class="success-quote" id="successQuote"></div>
   <button class="btn-primary" onclick="closeSuccess()">Continue</button>
 </div></div>
 <div class="overlay" id="delOverlay"><div class="overlay-box dq-window">
@@ -155,35 +142,6 @@ textarea::placeholder { color: #404060; }
 <div class="toast" id="toast"></div>
 <script>
 const CREATURES=[{name:'Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="sg1" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#6DD8FF"/><stop offset="40%" stop-color="#2EA8E0"/><stop offset="75%" stop-color="#1B7CB8"/><stop offset="100%" stop-color="#145F8A"/></radialGradient><radialGradient id="sp1" cx="35%" cy="25%" r="30%"><stop offset="0%" stop-color="rgba(255,255,255,0.4)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><path d="M50 6C50 6,42 18,30 32C18 46,10 58,10 68C10 82,22 95,50 95C78 95,90 82,90 68C90 58,82 46,70 32C58 18,50 6,50 6Z" fill="url(#sg1)" stroke="#0E5A80" stroke-width="1"/><path d="M50 8C50 8,42 20,32 33C22 46,14 58,14 68C14 78,20 86,34 90C20 82,16 72,20 60C24 48,36 30,50 8Z" fill="url(#sp1)"/><ellipse cx="38" cy="62" rx="7.5" ry="8.5" fill="#fff" stroke="#0E5A80" stroke-width="0.5"/><ellipse cx="39.5" cy="62.5" rx="3.8" ry="4.5" fill="#1A1A2E"/><ellipse cx="40.5" cy="61" rx="1.5" ry="1.8" fill="#fff"/><ellipse cx="62" cy="62" rx="7.5" ry="8.5" fill="#fff" stroke="#0E5A80" stroke-width="0.5"/><ellipse cx="63.5" cy="62.5" rx="3.8" ry="4.5" fill="#1A1A2E"/><ellipse cx="64.5" cy="61" rx="1.5" ry="1.8" fill="#fff"/><path d="M38 76Q42 83,50 84Q58 83,62 76" fill="none" stroke="#0E4A6A" stroke-width="2" stroke-linecap="round"/></svg>`},{name:'Metal Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="mg1" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#E8E8F0"/><stop offset="30%" stop-color="#B8B8C8"/><stop offset="60%" stop-color="#888898"/><stop offset="100%" stop-color="#585868"/></radialGradient><radialGradient id="mp1" cx="35%" cy="25%" r="28%"><stop offset="0%" stop-color="rgba(255,255,255,0.55)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><path d="M50 6C50 6,42 18,30 32C18 46,10 58,10 68C10 82,22 95,50 95C78 95,90 82,90 68C90 58,82 46,70 32C58 18,50 6,50 6Z" fill="url(#mg1)" stroke="#404058" stroke-width="1"/><path d="M50 8C50 8,42 20,32 33C22 46,14 58,14 68C14 78,20 86,34 90C20 82,16 72,20 60C24 48,36 30,50 8Z" fill="url(#mp1)"/><ellipse cx="32" cy="28" rx="7" ry="10" fill="rgba(255,255,255,0.25)" transform="rotate(-15,32,28)"/><ellipse cx="38" cy="62" rx="7" ry="8" fill="#fff" stroke="#505060" stroke-width="0.5"/><ellipse cx="39.5" cy="62.5" rx="3.5" ry="4.2" fill="#1A1A2E"/><ellipse cx="40.5" cy="61" rx="1.4" ry="1.6" fill="#fff"/><ellipse cx="62" cy="62" rx="7" ry="8" fill="#fff" stroke="#505060" stroke-width="0.5"/><ellipse cx="63.5" cy="62.5" rx="3.5" ry="4.2" fill="#1A1A2E"/><ellipse cx="64.5" cy="61" rx="1.4" ry="1.6" fill="#fff"/><path d="M38 75Q42 81,50 82Q58 81,62 75" fill="#D07860" stroke="#806050" stroke-width="0.5"/></svg>`},{name:'Bubble Slime',svg:`<svg viewBox="0 0 120 100"><defs><radialGradient id="bg1" cx="40%" cy="40%" r="55%"><stop offset="0%" stop-color="#C8D8E0"/><stop offset="40%" stop-color="#90A8B8"/><stop offset="75%" stop-color="#607888"/><stop offset="100%" stop-color="#405060"/></radialGradient><radialGradient id="bub" cx="35%" cy="30%" r="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.5)"/><stop offset="100%" stop-color="rgba(200,220,230,0.2)"/></radialGradient></defs><ellipse cx="60" cy="78" rx="52" ry="18" fill="url(#bg1)" stroke="#405060" stroke-width="1"/><ellipse cx="48" cy="74" rx="5.5" ry="6.5" fill="#fff" stroke="#405060" stroke-width="0.5"/><ellipse cx="49" cy="74.5" rx="2.8" ry="3.5" fill="#1A1A2E"/><ellipse cx="49.8" cy="73.2" rx="1.2" ry="1.4" fill="#fff"/><ellipse cx="68" cy="74" rx="5.5" ry="6.5" fill="#fff" stroke="#405060" stroke-width="0.5"/><ellipse cx="69" cy="74.5" rx="2.8" ry="3.5" fill="#1A1A2E"/><ellipse cx="69.8" cy="73.2" rx="1.2" ry="1.4" fill="#fff"/><path d="M50 83Q55 88,60 88Q65 87,67 83" fill="#303848"/><circle cx="35" cy="50" r="7" fill="url(#bub)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/><circle cx="55" cy="38" r="9" fill="url(#bub)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/><circle cx="78" cy="44" r="6" fill="url(#bub)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/><circle cx="45" cy="28" r="5" fill="url(#bub)"/><circle cx="70" cy="30" r="4" fill="url(#bub)"/><circle cx="88" cy="56" r="4.5" fill="url(#bub)"/></svg>`},{name:'King Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="kg1" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5CAEF0"/><stop offset="40%" stop-color="#2878D0"/><stop offset="75%" stop-color="#1858A0"/><stop offset="100%" stop-color="#103870"/></radialGradient><linearGradient id="crG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE040"/><stop offset="100%" stop-color="#C89820"/></linearGradient></defs><ellipse cx="50" cy="68" rx="42" ry="28" fill="url(#kg1)" stroke="#0E4878" stroke-width="1"/><path d="M26 42L30 28L36 38L42 22L50 38L58 22L64 38L70 28L74 42Z" fill="url(#crG)" stroke="#987018" stroke-width="0.8"/><rect x="26" y="40" width="48" height="7" rx="1" fill="url(#crG)" stroke="#987018" stroke-width="0.5"/><circle cx="38" cy="43.5" r="2.5" fill="#50B878"/><circle cx="50" cy="43.5" r="2.8" fill="#C850C0"/><circle cx="62" cy="43.5" r="2.5" fill="#50B878"/><path d="M48 22L50 14L52 22" fill="url(#crG)"/><circle cx="50" cy="13" r="2" fill="#FFE040"/><ellipse cx="40" cy="64" rx="6" ry="7" fill="#fff" stroke="#0E4878" stroke-width="0.5"/><ellipse cx="41" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><ellipse cx="41.8" cy="63.2" rx="1.2" ry="1.5" fill="#fff"/><ellipse cx="60" cy="64" rx="6" ry="7" fill="#fff" stroke="#0E4878" stroke-width="0.5"/><ellipse cx="61" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><ellipse cx="61.8" cy="63.2" rx="1.2" ry="1.5" fill="#fff"/><path d="M40 76Q45 82,50 82Q55 82,60 76" fill="#D08070" stroke="#805848" stroke-width="0.5"/></svg>`},{name:'Dracky',svg:`<svg viewBox="0 0 130 100"><defs><radialGradient id="dg1" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5850A0"/><stop offset="50%" stop-color="#383068"/><stop offset="100%" stop-color="#201840"/></radialGradient></defs><path d="M20 38Q5 28,8 42Q2 50,10 52L18 52Z" fill="url(#dg1)" stroke="#181030" stroke-width="0.8"/><path d="M20 38L8 30Q3 40,10 48L18 52Z" fill="url(#dg1)" stroke="#181030" stroke-width="0.6"/><path d="M110 38Q125 28,122 42Q128 50,120 52L112 52Z" fill="url(#dg1)" stroke="#181030" stroke-width="0.8"/><path d="M110 38L122 30Q127 40,120 48L112 52Z" fill="url(#dg1)" stroke="#181030" stroke-width="0.6"/><ellipse cx="65" cy="50" rx="26" ry="24" fill="url(#dg1)" stroke="#181030" stroke-width="1"/><path d="M55 28Q52 16,48 10" fill="none" stroke="#383068" stroke-width="2.5" stroke-linecap="round"/><path d="M75 28Q78 16,82 10" fill="none" stroke="#383068" stroke-width="2.5" stroke-linecap="round"/><circle cx="47" cy="9" r="2.5" fill="#484078"/><circle cx="83" cy="9" r="2.5" fill="#484078"/><ellipse cx="55" cy="46" rx="7" ry="7.5" fill="#fff" stroke="#181030" stroke-width="0.5"/><ellipse cx="56" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="57" cy="45" rx="1.5" ry="1.8" fill="#fff"/><ellipse cx="75" cy="46" rx="7" ry="7.5" fill="#fff" stroke="#181030" stroke-width="0.5"/><ellipse cx="76" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="77" cy="45" rx="1.5" ry="1.8" fill="#fff"/><path d="M52 60Q58 70,65 70Q72 70,78 60" fill="#C06040" stroke="#802820" stroke-width="0.8"/><path d="M55 60L57 65L59 60" fill="#fff"/><path d="M71 60L73 65L75 60" fill="#fff"/><ellipse cx="52" cy="73" rx="6" ry="4" fill="#302858"/><ellipse cx="78" cy="73" rx="6" ry="4" fill="#302858"/><path d="M65 74Q68 82,74 86Q80 88,84 84" fill="none" stroke="#383068" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="40" cy="58" rx="5" ry="4" fill="#302858" transform="rotate(-20,40,58)"/><ellipse cx="90" cy="58" rx="5" ry="4" fill="#302858" transform="rotate(20,90,58)"/></svg>`}];
-
-const DQ_QUOTES=[
-{q:"Despair is a part of hope! Hope is embedded in despair!",src:"Happy Ways to Overcome Your Despair — DQ Monsters"},
-{q:"Remember, together it is possible to break even an elm. Together, you can overcome even the strongest evil.",src:"Marta — Dragon Quest VIII"},
-{q:"One doth not perform heroic deeds because one is a hero — one becometh a hero by performing heroic deeds.",src:"Gwaelin — Dragon Quest I"},
-{q:"Knowledge is the key to success! Books are knowledge!",src:"GreatTree Library — DQ Monsters"},
-{q:"There's people from all walks o' life in this here town. The good, the bad, and the ugly.",src:"Old man — Dragon Quest V"},
-{q:"No creature is more powerful than the lion. And yet the puny tortoise lives longer than any other beast.",src:"Elder of Al-balad — Dragon Quest VII"},
-{q:"Honesty is the key to any relationship. If you can fake that, you're set.",src:"FooPriest — Dragon Quest VII"},
-{q:"I am in tip-top shape, I assure you. Mentally and physically. A pot I may be, but I am in no way potty!",src:"Krak Pot — Dragon Quest IX"},
-{q:"If only I had had that old book of yours, and some friends willing to pursue my dream, it could have been my adventure...",src:"Dermot — Dragon Quest VII"},
-{q:"I do not care of excuses — we should never have doubted him. It was us who were faulty.",src:"Old man of Vogograd — Dragon Quest VII"},
-{q:"It takes real courage to admit one is wrong. Clearly the elder has none.",src:"Sir Mervyn — Dragon Quest VII"},
-{q:"When the times are tough, you must cry. This is molto importante!",src:"Morrie — Dragon Quest VIII"},
-{q:"Churches are good for 'avin' a snooze, an' pubs are good for 'avin' some booze!",src:"Yangus — Dragon Quest VIII"},
-{q:"So we became heroes? No sweat.",src:"Terry — Dragon Quest VI"},
-{q:"Thanks for the amazing adventure. Let's never do it again.",src:"Maribel — Dragon Quest VII"},
-{q:"You're a lot cleverer than you look, I'll say that much.",src:"Gerontius — Dragon Quest Builders"},
-{q:"I'm not a bad slime, you know! But I am goopendously angry!",src:"Sootheslime — Dragon Quest IX"},
-{q:"Sometimes I just don't have anything to say. It doesn't necessarily mean I'm in a mood.",src:"Deborah — Dragon Quest V"},
-{q:"Man is the only creature impertinent enough to try to escape death itself.",src:"Gerontius — Dragon Quest Builders"},
-{q:"Persistence is not a virtue! Allow me to educate you.",src:"Marcello — Dragon Quest VIII"},
-{q:"I've failed to bring peace... Forgive me, your wretched father...",src:"Ortega — Dragon Quest III"},
-{q:"I remember. Everything you ever told me lives on inside my heart.",src:"King Pavan — Dragon Quest VIII"},
-{q:"Cor Blimey, Don't sneak upon me like that!",src:"Yangus — Dragon Quest VIII"},
-{q:"Ahh, it's good to be home.",src:"Maribel entering the Dark Palace — DQ VII"},
-{q:"The story of 'ow me an' the guv fell in together is an epic tale, full o' laughter, thrills, and tears...",src:"Yangus — Dragon Quest VIII"},
-{q:"Damn. People are always kicking my ass. What's that? What do you mean, which end is my ass?",src:"Slime — Dragon Quest VII"},
-];
 
 const SAVE_MESSAGES=[
 '<span class="hl">Jimmy</span> recorded a new page in the Adventure Log!\n\nThy thoughts are preserved for the ages.',
@@ -203,13 +161,12 @@ let entries=[];
 let state={editingId:null};
 let pendingDeleteId=null;
 
-function spawnCreature(){const c=CREATURES[Math.floor(Math.random()*CREATURES.length)];document.getElementById('creatureWrap').innerHTML=c.svg+'<div class="slime-shadow"></div>';document.getElementById('creatureName').textContent=c.name;}
-function newWisdom(){const q=DQ_QUOTES[Math.floor(Math.random()*DQ_QUOTES.length)];document.getElementById('wisdomText').textContent=q.q;document.getElementById('wisdomSource').textContent='— '+q.src;}
+function spawnCreature(){const c=CREATURES[Math.floor(Math.random()*CREATURES.length)];document.getElementById('creatureWrap').innerHTML=c.svg;}
 
 function init(){
   try{const r=localStorage.getItem(STORAGE_KEY);if(r)entries=JSON.parse(r);}catch(e){}
   document.getElementById('dateText').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-  spawnCreature();newWisdom();updateUI();
+  spawnCreature();updateUI();
 }
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));}
 function updateUI(){
@@ -237,9 +194,7 @@ function handleSubmit(){
   if(wasEditing){showToast('Entry updated!');showView('log');}
   else{
     const msg=SAVE_MESSAGES[Math.floor(Math.random()*SAVE_MESSAGES.length)];
-    const q=DQ_QUOTES[Math.floor(Math.random()*DQ_QUOTES.length)];
     document.getElementById('successText').innerHTML=msg.replace(/\n/g,'<br>');
-    document.getElementById('successQuote').innerHTML='"'+q.q+'"<br>— '+q.src;
     document.getElementById('successOverlay').classList.add('open');
   }
 }
