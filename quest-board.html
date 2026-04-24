@@ -5,181 +5,209 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#101848">
+<meta name="theme-color" content="#080c20">
 <title>Hero's Quest Board</title>
 <style>
-:root{
-  --bg:#101848;--bg2:#0c1240;--border-o:#f8f0e0;--border-i:#c8b878;--border-d:#485090;
-  --text:#f8f8f8;--dim:#a0a8d0;--gold:#f8d848;--blue:#68c0f8;--green:#68e868;--red:#f87070;
-  --gg:rgba(248,216,72,0.12);--font:'Courier New','Courier',monospace;
+:root {
+  /* Authentic DQ UI Colors */
+  --bg: #0b112c;
+  --bg-window: #040814; 
+  --border-light: #ffffff;
+  --text: #f8f8f8;
+  --text-dim: #b0b8d0;
+  --text-gold: #f8d848;
+  --gold-glow: rgba(248, 216, 72, 0.15);
+  --green: #68e868;
+  --red: #f87070;
+  --red-glow: rgba(248, 112, 112, 0.15);
+  --font: 'Courier New', 'Courier', monospace;
   --common:#b0b8d0;--uncommon:#68e868;--rare:#68c0f8;--epic:#d088f8;--legendary:#f8d848;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);font-family:var(--font);max-width:480px;margin:0 auto;padding:0 0 80px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-.dq{position:relative;background:linear-gradient(180deg,#182058,#101848);border:3px solid var(--border-o);border-radius:10px;padding:14px;box-shadow:inset 0 0 0 2px var(--border-d),0 4px 16px rgba(0,0,0,.3)}
-.dq::before{content:'';position:absolute;inset:2px;border:1px solid var(--border-i);border-radius:7px;pointer-events:none}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  min-height: 100vh; min-height: 100dvh;
+  background: var(--bg); color: var(--text);
+  font-family: var(--font); max-width: 480px; margin: 0 auto;
+  padding: 0 0 80px 0; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  text-shadow: 1px 1px 0px #000;
+}
+
+/* ── Authentic DQ Window ── */
+.dq { 
+  position: relative; 
+  background: var(--bg-window); 
+  border: 3px solid var(--border-light); 
+  border-radius: 6px; 
+  padding: 16px; 
+  box-shadow: inset 0 0 0 2px var(--bg-window), inset 0 0 0 4px var(--border-light), 0 4px 15px rgba(0,0,0,0.5); 
+}
 
 /* Header */
-.hdr{display:flex;align-items:center;gap:10px;padding:14px 16px 8px}
-.hdr-creature{width:36px;height:36px;cursor:pointer;animation:float 3s ease-in-out infinite}
-.hdr-creature svg{width:100%;height:100%}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.hdr-info{flex:1}
-.hdr-name{font-size:14px;font-weight:bold;color:var(--gold);letter-spacing:1px}
-.hdr-class{font-size:10px;color:var(--dim)}
-.hdr-lvl{font-size:11px;font-weight:bold;color:var(--gold);background:var(--gg);border:1px solid rgba(240,216,96,.2);padding:4px 10px;border-radius:12px}
+.hdr { display: flex; align-items: center; gap: 16px; padding: 20px 16px 12px; }
+.hdr-creature { width: 48px; height: 48px; cursor: pointer; animation: float 3s ease-in-out infinite; filter: drop-shadow(0px 4px 2px rgba(0,0,0,0.5));}
+.hdr-creature svg { width: 100%; height: 100%; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.hdr-info { flex: 1; }
+.hdr-name { font-size: 18px; font-weight: bold; color: var(--text-gold); letter-spacing: 1px; text-transform: uppercase;}
+.hdr-class { font-size: 12px; color: var(--text-dim); margin-top: 4px; font-weight: bold;}
+.hdr-lvl { font-size: 14px; font-weight: bold; color: var(--text-gold); background: var(--bg-window); border: 2px solid var(--border-light); padding: 8px 12px; border-radius: 4px; box-shadow: inset 0 0 0 2px var(--bg-window), inset 0 0 0 3px var(--border-light);}
 
 /* EXP bar */
-.exp-bar{margin:0 16px 4px;height:10px;background:rgba(0,0,0,.25);border:1px solid var(--border-d);border-radius:2px;overflow:hidden;position:relative}
-.exp-fill{height:100%;background:linear-gradient(90deg,#4040d0,#58a8f8,#58d858);transition:width .6s;border-radius:2px}
-.exp-text{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;color:rgba(255,255,255,.7);text-shadow:0 0 4px rgba(0,0,0,.8)}
+.exp-bar { margin: 0 16px 8px; height: 16px; background: #000; border: 2px solid var(--border-light); border-radius: 4px; overflow: hidden; position: relative; padding: 2px;}
+.exp-fill { height: 100%; background: linear-gradient(90deg, #182868, var(--blue), var(--green)); transition: width .6s ease; border-right: 2px solid #fff;}
+.exp-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 0px #000;}
 
 /* Gold display */
-.gold-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 16px 8px}
-.gold-coin{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe880,#d4a820);border:1px solid var(--border-d);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;color:var(--border-d)}
-.gold-amt{font-size:14px;font-weight:bold;color:var(--gold)}
+.gold-bar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px 12px; }
+.gold-coin { width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #ffe880, #d4a820); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #000; text-shadow: 0 1px 0 #ffe880;}
+.gold-amt { font-size: 20px; font-weight: bold; color: var(--text-gold); }
 
 /* Nav */
-.nav{display:flex;gap:3px;padding:0 12px 10px}
-.nav-btn{flex:1;padding:8px 2px;border:2px solid var(--border-d);border-radius:4px;background:linear-gradient(180deg,#182058,#101848);color:var(--dim);font-family:var(--font);font-size:9px;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;transition:all .15s;text-align:center}
-.nav-btn.active{background:var(--gg);border-color:var(--border-o);color:var(--gold)}
+.nav { display: flex; gap: 6px; padding: 0 16px 16px; overflow-x: auto; scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
+.nav-btn { flex: 1; min-width: 70px; padding: 12px 6px; border: 2px solid var(--border-light); border-radius: 4px; background: var(--bg-window); color: var(--text-dim); font-family: var(--font); font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.15s; text-align: center; }
+.nav-btn.active { background: var(--gold-glow); color: var(--text-gold); box-shadow: inset 0 0 10px rgba(240,216,96,0.2); }
 
 /* Sections */
-.sec{padding:0 12px;position:relative;z-index:1}
-.hidden{display:none!important}
+.sec { padding: 0 16px; position: relative; z-index: 1; }
+.hidden { display: none !important; }
 
 /* ── QUESTS TAB ── */
-.quest-card{margin-bottom:8px;padding:12px;display:flex;align-items:center;gap:10px}
-.quest-check{width:32px;height:32px;border-radius:8px;border:2px solid var(--border-d);background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
-.quest-check.done{border-color:var(--green);background:rgba(88,216,88,.1)}
-.quest-check.maxed{border-color:var(--dim);background:rgba(120,120,160,.05);opacity:.5;cursor:default}
-.quest-body{flex:1;min-width:0}
-.quest-name{font-size:13px;font-weight:bold;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.quest-meta{font-size:10px;color:var(--dim);margin-top:2px}
-.quest-meta .xp{color:var(--blue)}
-.quest-meta .gp{color:var(--gold)}
-.quest-count{font-size:10px;color:var(--dim);margin-top:1px}
-.quest-del{padding:4px 8px;border:1px solid var(--border-d);border-radius:3px;background:transparent;color:var(--dim);font-family:var(--font);font-size:10px;cursor:pointer;flex-shrink:0}
+.quest-card { margin-bottom: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+.quest-check { width: 44px; height: 44px; border-radius: 6px; border: 2px solid var(--border-light); background: rgba(0,0,0,.3); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 22px; transition: all .2s; flex-shrink: 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+.quest-check:active { background: rgba(255,255,255,0.1); }
+.quest-check.done { border-color: var(--green); background: rgba(104,232,104,.15); color: var(--green);}
+.quest-check.maxed { border-color: var(--text-dim); background: rgba(0,0,0,.1); opacity: .5; cursor: default; color: var(--text-dim);}
+.quest-body { flex: 1; min-width: 0; }
+.quest-name { font-size: 15px; font-weight: bold; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;}
+.quest-meta { font-size: 11px; color: var(--text-dim); font-weight: bold; text-transform: uppercase;}
+.quest-meta .xp { color: var(--blue); }
+.quest-meta .gp { color: var(--gold); }
+.quest-count { font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: bold; }
+.quest-del { padding: 8px 12px; border: 2px solid var(--border-light); border-radius: 4px; background: transparent; color: var(--text); font-family: var(--font); font-size: 12px; cursor: pointer; flex-shrink: 0; font-weight: bold;}
+.quest-del:active { background: var(--red); border-color: var(--red); color: var(--bg-window); text-shadow: none;}
 
-.add-quest-btn{width:100%;padding:12px;border:2px dashed var(--border-d);border-radius:8px;background:transparent;color:var(--dim);font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;transition:all .2s}
-.add-quest-btn:active{border-color:var(--border-i);color:var(--gold)}
+.add-quest-btn { width: 100%; padding: 16px; border: 2px dashed var(--border-light); border-radius: 6px; background: transparent; color: var(--text-dim); font-family: var(--font); font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 8px; transition: all .2s; }
+.add-quest-btn:active { border-color: var(--text-gold); color: var(--text-gold); background: var(--gold-glow);}
 
 /* ── HERO TAB ── */
-.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.hero-stat{padding:12px;text-align:center}
-.hs-val{font-size:22px;font-weight:bold;color:var(--gold)}
-.hs-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.hero-stat { padding: 16px; text-align: center; }
+.hs-val { font-size: 24px; font-weight: bold; color: var(--text-gold); }
+.hs-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin-top: 6px; }
 
-.class-progression{margin-bottom:12px}
-.cp-title{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.cp-list{display:flex;flex-wrap:wrap;gap:4px}
-.cp-badge{padding:4px 8px;border-radius:3px;border:1px solid var(--border-d);font-size:10px;font-weight:bold;color:var(--dim)}
-.cp-badge.achieved{border-color:var(--green);color:var(--green);background:rgba(88,216,88,.08)}
-.cp-badge.current{border-color:var(--gold);color:var(--gold);background:var(--gg)}
+.class-progression { margin-bottom: 16px; padding: 16px;}
+.cp-title { font-size: 13px; color: var(--text-gold); text-transform: uppercase; font-weight: bold; margin-bottom: 12px; text-align: center; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 8px;}
+.cp-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;}
+.cp-badge { padding: 8px 12px; border-radius: 4px; border: 2px solid var(--border-light); font-size: 11px; font-weight: bold; color: var(--text-dim); background: var(--bg-window); text-transform: uppercase;}
+.cp-badge.achieved { border-color: var(--green); color: var(--green); background: rgba(104,232,104,.1); }
+.cp-badge.current { border-color: var(--text-gold); color: var(--text-gold); background: var(--gold-glow); box-shadow: 0 0 10px rgba(248,216,72,0.2);}
 
 /* ── SHOP TAB ── */
-.shop-cats{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap}
-.shop-cat{padding:5px 10px;border:1px solid var(--border-d);border-radius:3px;background:transparent;color:var(--dim);font-family:var(--font);font-size:9px;font-weight:bold;cursor:pointer;text-transform:uppercase}
-.shop-cat.active{border-color:var(--border-i);color:var(--gold);background:var(--gg)}
+.shop-cats { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center;}
+.shop-cat { padding: 8px 12px; border: 2px solid var(--border-light); border-radius: 4px; background: var(--bg-window); color: var(--text-dim); font-family: var(--font); font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+.shop-cat.active { border-color: var(--text-gold); color: var(--text-gold); background: var(--gold-glow); }
 
-.shop-item{margin-bottom:6px;padding:10px;display:flex;align-items:center;gap:10px}
-.si-icon{font-size:22px;flex-shrink:0;width:32px;text-align:center}
-.si-info{flex:1;min-width:0}
-.si-name{font-size:12px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.si-desc{font-size:9px;color:var(--dim);margin-top:1px;line-height:1.3}
-.si-rarity{font-size:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px}
-.si-buy{padding:5px 10px;border:2px solid var(--border-i);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:10px;font-weight:bold;cursor:pointer;flex-shrink:0;white-space:nowrap}
-.si-buy:disabled{opacity:.3;cursor:not-allowed}
-.si-buy.owned{border-color:var(--green);color:var(--green);background:rgba(88,216,88,.08)}
+.shop-item { margin-bottom: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+.si-icon { font-size: 32px; flex-shrink: 0; width: 40px; text-align: center; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));}
+.si-info { flex: 1; min-width: 0; }
+.si-name { font-size: 14px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;}
+.si-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; margin-bottom: 6px;}
+.si-rarity { font-size: 10px; font-weight: bold; text-transform: uppercase; }
+.si-buy { padding: 10px 14px; border: 2px solid var(--border-light); border-radius: 4px; background: linear-gradient(180deg, #182868, #0b112c); color: var(--text-gold); font-family: var(--font); font-size: 12px; font-weight: bold; cursor: pointer; flex-shrink: 0; white-space: nowrap; text-transform: uppercase;}
+.si-buy:disabled { opacity: .3; cursor: not-allowed; }
+.si-buy.owned { border-color: var(--green); color: var(--green); background: rgba(104,232,104,.1); opacity: 1;}
 
 /* ── TREASURY TAB ── */
-.treasury-stats{display:flex;gap:8px;margin-bottom:10px}
-.ts-pill{flex:1;text-align:center;padding:8px 4px;background:linear-gradient(180deg,#182058,#101848);border:1px solid var(--border-d);border-radius:4px}
-.ts-val{font-size:16px;font-weight:bold;color:var(--gold)}
-.ts-label{font-size:8px;color:var(--dim);text-transform:uppercase}
+.treasury-stats { display: flex; gap: 12px; margin-bottom: 16px; }
+.ts-pill { flex: 1; text-align: center; padding: 12px 8px; background: var(--bg-window); border: 2px solid var(--border-light); border-radius: 6px; box-shadow: inset 0 0 0 2px var(--bg-window), inset 0 0 0 3px var(--border-light);}
+.ts-val { font-size: 20px; font-weight: bold; color: var(--text-gold); margin-bottom: 4px;}
+.ts-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: bold;}
 
-.treasury-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.tg-item{aspect-ratio:1;border:2px solid var(--border-d);border-radius:6px;background:linear-gradient(180deg,#182058,#101848);display:flex;align-items:center;justify-content:center;font-size:22px;position:relative;transition:all .15s}
-.tg-item.empty{opacity:.2;font-size:14px}
-.tg-item.owned{border-color:var(--border-i)}
-.tg-item .tg-rarity{position:absolute;bottom:1px;right:2px;width:5px;height:5px;border-radius:50%}
+.treasury-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.tg-item { aspect-ratio: 1; border: 2px solid var(--border-light); border-radius: 6px; background: var(--bg-window); display: flex; align-items: center; justify-content: center; font-size: 26px; position: relative; transition: all .15s; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));}
+.tg-item.empty { opacity: .3; font-size: 16px; filter: none; border-color: var(--text-dim);}
+.tg-item.owned { border-color: var(--text-gold); background: rgba(248,216,72,0.05);}
+.tg-item .tg-rarity { position: absolute; bottom: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; border: 1px solid #000;}
 
 /* ── LOOT LOG ── */
-.loot-entry{margin-bottom:6px;padding:10px;display:flex;align-items:center;gap:8px}
-.le-icon{font-size:18px;flex-shrink:0}
-.le-text{font-size:11px;color:var(--text);flex:1}
-.le-text .hl{color:var(--gold)}
-.le-date{font-size:9px;color:var(--dim);flex-shrink:0}
+.loot-entry { margin-bottom: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+.le-icon { font-size: 24px; flex-shrink: 0; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));}
+.le-text { font-size: 13px; color: var(--text); flex: 1; line-height: 1.4;}
+.le-text .hl { color: var(--text-gold); font-weight: bold;}
+.le-date { font-size: 11px; color: var(--text-dim); flex-shrink: 0; font-weight: bold;}
 
 /* ── Overlays ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:flex;align-items:flex-end;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
-.overlay.open{opacity:1;pointer-events:auto}
-.overlay.center{align-items:center}
-.ov-box{max-width:440px;width:100%;padding:16px;margin-bottom:16px}
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.overlay.open { opacity: 1; pointer-events: auto; }
+.ov-box { max-width: 440px; width: 100%; padding: 24px; }
 
-.ov-label{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block}
-.ov-input{width:100%;padding:10px;border:2px solid var(--border-i);border-radius:4px;background:rgba(0,0,0,.2);color:var(--text);font-family:var(--font);font-size:14px;outline:none;margin-bottom:10px}
-.ov-input:focus{border-color:var(--border-o)}
-.ov-input::placeholder{color:#6068a0}
-.ov-row{display:flex;gap:8px;margin-bottom:10px}
-.ov-row .ov-field{flex:1}
-.ov-row .ov-field label{font-size:9px;color:var(--dim);display:block;margin-bottom:4px;text-transform:uppercase}
-.ov-row .ov-field input,.ov-row .ov-field select{width:100%;padding:8px;border:1px solid var(--border-d);border-radius:4px;background:linear-gradient(180deg,#182058,#101848);color:var(--text);font-family:var(--font);font-size:13px;outline:none}
-.ov-row .ov-field select{-webkit-appearance:none}
-.ov-btns{display:flex;gap:8px}
-.ov-btns button{flex:1;padding:10px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase}
-.ov-save{border:2px solid var(--border-o);background:linear-gradient(180deg,#283880,#182058);color:var(--gold)}
-.ov-cancel{border:1px solid var(--border-d);background:transparent;color:var(--dim)}
+.ov-label { font-size: 14px; color: var(--text-gold); text-transform: uppercase; font-weight: bold; margin-bottom: 12px; display: block; text-align: center;}
+.ov-input { width: 100%; padding: 14px; border: 2px solid var(--border-light); border-radius: 4px; background: var(--bg-window); color: var(--text); font-family: var(--font); font-size: 15px; outline: none; margin-bottom: 16px; text-shadow: none;}
+.ov-input:focus { border-color: var(--text-gold); }
+.ov-input::placeholder { color: #4a5480; }
+
+.ov-row { display: flex; gap: 12px; margin-bottom: 16px; }
+.ov-row .ov-field { flex: 1; }
+.ov-row .ov-field label { font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 8px; text-transform: uppercase; font-weight: bold;}
+.ov-row .ov-field input, .ov-row .ov-field select { width: 100%; padding: 12px; border: 2px solid var(--border-light); border-radius: 4px; background: var(--bg-window); color: var(--text); font-family: var(--font); font-size: 14px; outline: none; text-shadow: none;}
+.ov-row .ov-field select { -webkit-appearance: none; cursor: pointer;}
+
+.ov-btns { display: flex; gap: 12px; margin-top: 24px;}
+.ov-btns button { flex: 1; padding: 14px; border-radius: 4px; font-family: var(--font); font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+.ov-save { border: 2px solid var(--border-light); background: linear-gradient(180deg, #182868, #0b112c); color: var(--text-gold); }
+.ov-cancel { border: 2px dashed var(--red); background: var(--red-glow); color: var(--red); }
 
 /* Level up overlay */
-.lvl-up-box{text-align:center;padding:24px}
-.lvl-up-icon{font-size:48px;margin-bottom:8px;animation:lvlPulse 1s ease-in-out infinite}
-@keyframes lvlPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.lvl-up-text{font-size:18px;font-weight:bold;color:var(--gold);text-shadow:0 0 16px rgba(240,216,96,.3);margin-bottom:4px}
-.lvl-up-class{font-size:13px;color:var(--text);margin-bottom:6px}
-.lvl-up-sub{font-size:11px;color:var(--dim);margin-bottom:16px;line-height:1.5}
-.lvl-up-btn{padding:12px 32px;border:2px solid var(--border-o);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:13px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+.lvl-up-box { text-align: center; }
+.lvl-up-icon { font-size: 64px; margin-bottom: 16px; animation: lvlPulse 1s ease-in-out infinite; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));}
+@keyframes lvlPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+.lvl-up-text { font-size: 24px; font-weight: bold; color: var(--text-gold); margin-bottom: 8px; text-transform: uppercase;}
+.lvl-up-class { font-size: 16px; color: var(--text); margin-bottom: 12px; font-weight: bold;}
+.lvl-up-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6; }
+.lvl-up-btn { width: 100%; padding: 16px; border: 2px solid var(--border-light); border-radius: 4px; background: linear-gradient(180deg, #182868, #0b112c); color: var(--text-gold); font-family: var(--font); font-size: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
-/* Loot drop overlay */
-.loot-box{text-align:center;padding:24px}
-.loot-icon{font-size:48px;margin-bottom:8px;animation:lootBounce .6s ease}
-@keyframes lootBounce{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
-.loot-text{font-size:14px;color:var(--text);margin-bottom:4px}
-.loot-name{font-size:16px;font-weight:bold;margin-bottom:4px}
-.loot-desc{font-size:11px;color:var(--dim);margin-bottom:14px;line-height:1.4}
-.loot-btn{padding:10px 28px;border:2px solid var(--border-o);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+/* Loot Drop overlay */
+.loot-box { text-align: center; }
+.loot-icon { font-size: 64px; margin-bottom: 16px; animation: lootBounce .6s ease; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));}
+@keyframes lootBounce { 0%{transform:scale(0) rotate(-20deg);opacity:0} 60%{transform:scale(1.2) rotate(5deg);opacity:1} 100%{transform:scale(1) rotate(0)} }
+.loot-text { font-size: 16px; color: var(--text); margin-bottom: 8px; font-weight: bold;}
+.loot-name { font-size: 20px; font-weight: bold; margin-bottom: 8px; text-shadow: 1px 1px 0 #000;}
+.loot-desc { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6; }
+.loot-btn { width: 100%; padding: 16px; border: 2px solid var(--border-light); border-radius: 4px; background: linear-gradient(180deg, #182868, #0b112c); color: var(--text-gold); font-family: var(--font); font-size: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
-/* Item detail overlay */
-.item-detail{text-align:center;padding:20px}
-.id-icon{font-size:48px;margin-bottom:6px}
-.id-name{font-size:16px;font-weight:bold;margin-bottom:4px}
-.id-rarity{font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.id-desc{font-size:12px;color:var(--dim);line-height:1.5;margin-bottom:14px}
-.id-close{padding:10px 28px;border:2px solid var(--border-o);border-radius:4px;background:linear-gradient(180deg,#283880,#182058);color:var(--gold);font-family:var(--font);font-size:12px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+/* Item Detail overlay */
+.item-detail { text-align: center; }
+.id-icon { font-size: 64px; margin-bottom: 16px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));}
+.id-name { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+.id-rarity { font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 12px; }
+.id-desc { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 24px; }
+.id-close { width: 100%; padding: 16px; border: 2px solid var(--border-light); border-radius: 4px; background: var(--bg-window); color: var(--text); font-family: var(--font); font-size: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
 /* Export */
-.export-bar{display:flex;gap:6px;padding:10px 12px}
-.export-btn{flex:1;padding:8px;border:1px solid var(--border-d);border-radius:4px;background:linear-gradient(180deg,#182058,#101848);color:var(--dim);font-family:var(--font);font-size:9px;font-weight:bold;cursor:pointer}
+.export-bar { display: flex; gap: 8px; padding: 16px; justify-content: center; flex-wrap: wrap;}
+.export-btn { padding: 12px 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 4px; background: transparent; color: var(--text-dim); font-family: var(--font); font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase;}
 
 /* Toast */
-.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(16px);background:linear-gradient(180deg,#182058,#101848);border:2px solid var(--border-o);color:var(--gold);padding:8px 18px;border-radius:4px;font-family:var(--font);font-size:12px;font-weight:bold;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg-window); border: 2px solid var(--border-light); color: var(--text-gold); padding: 12px 24px; border-radius: 4px; font-family: var(--font); font-size: 14px; font-weight: bold; z-index: 999; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Particle container for level ups */
-.particle-overlay{position:fixed;inset:0;pointer-events:none;z-index:150}
-.lvl-particle{position:absolute;border-radius:50%;background:var(--gold);box-shadow:0 0 6px rgba(240,216,96,.5)}
+/* Particles */
+.particle-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 150; }
+.lvl-particle { position: absolute; border-radius: 50%; background: var(--text-gold); box-shadow: 0 0 8px rgba(248,216,72,.8); }
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.quest-card,.shop-item,.loot-entry,.tg-item{animation:fadeUp .2s ease both}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.quest-card, .shop-item, .loot-entry, .tg-item { animation: fadeUp .25s ease both; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="hdr">
   <div class="hdr-creature" id="creatureWrap" onclick="spawnCreature()"></div>
   <div class="hdr-info">
-    <div class="hdr-name">Jimmy</div>
+    <div class="hdr-name">Hero</div>
     <div class="hdr-class" id="hdrClass">Lv.1 Slime</div>
   </div>
   <div class="hdr-lvl" id="hdrLvl">Lv.1</div>
@@ -187,77 +215,68 @@ body{min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);f
 <div class="exp-bar"><div class="exp-fill" id="expFill" style="width:0%"></div><div class="exp-text" id="expText">0 / 100 EXP</div></div>
 <div class="gold-bar"><div class="gold-coin">G</div><div class="gold-amt" id="goldAmt">0 G</div></div>
 
-<!-- Nav -->
 <div class="nav">
   <button class="nav-btn active" id="navQuests" onclick="showTab('quests')">⚔️ Quests</button>
-  <button class="nav-btn" id="navHero" onclick="showTab('hero')">🛡️ Hero</button>
+  <button class="nav-btn" id="navHero" onclick="showTab('hero')">🛡️ Stats</button>
   <button class="nav-btn" id="navShop" onclick="showTab('shop')">🏪 Shop</button>
-  <button class="nav-btn" id="navTreasury" onclick="showTab('treasury')">👑 Loot</button>
+  <button class="nav-btn" id="navTreasury" onclick="showTab('treasury')">👑 Vault</button>
   <button class="nav-btn" id="navLootlog" onclick="showTab('lootlog')">📜 Log</button>
 </div>
 
-<!-- QUESTS -->
 <div class="sec" id="secQuests">
   <div id="questList"></div>
-  <button class="add-quest-btn" onclick="showAddQuest()">+ Add New Quest</button>
+  <button class="add-quest-btn" onclick="showAddQuest()">+ Draft New Quest</button>
 </div>
 
-<!-- HERO -->
 <div class="sec hidden" id="secHero">
   <div class="hero-stats" id="heroStats"></div>
-  <div class="class-progression"><div class="cp-title">Class Progression</div><div class="cp-list" id="classList"></div></div>
+  <div class="class-progression dq"><div class="cp-title">Vocation Mastery</div><div class="cp-list" id="classList"></div></div>
 </div>
 
-<!-- SHOP -->
 <div class="sec hidden" id="secShop">
   <div class="shop-cats" id="shopCats"></div>
   <div id="shopList"></div>
 </div>
 
-<!-- TREASURY -->
 <div class="sec hidden" id="secTreasury">
   <div class="treasury-stats" id="treasuryStats"></div>
   <div class="treasury-grid" id="treasuryGrid"></div>
 </div>
 
-<!-- LOOT LOG -->
 <div class="sec hidden" id="secLootlog">
   <div id="lootLogList"></div>
 </div>
 
-<!-- Export -->
 <div class="export-bar">
-  <button class="export-btn" onclick="exportJSON()">Export</button>
-  <button class="export-btn" onclick="document.getElementById('importFile').click()">Import</button>
+  <button class="export-btn" onclick="exportJSON()">Export Tome</button>
+  <button class="export-btn" onclick="document.getElementById('importFile').click()">Import Tome</button>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-  <button class="export-btn" onclick="if(confirm('Reset ALL data?')){localStorage.removeItem(SK);location.reload()}">Reset</button>
+  <button class="export-btn" style="border-color: rgba(248,112,112,0.5); color: var(--red);" onclick="if(confirm('Erase ALL data? This cannot be undone.')){localStorage.removeItem(SK);location.reload()}">Erase Save</button>
 </div>
 
-<!-- Add Quest overlay -->
 <div class="overlay" id="addQuestOv">
   <div class="ov-box dq">
-    <div class="ov-label">New Quest</div>
-    <input class="ov-input" id="qName" placeholder="Quest name..." maxlength="50">
+    <div class="ov-label">Forge New Quest</div>
+    <input class="ov-input" id="qName" placeholder="Quest objective..." maxlength="50">
     <div class="ov-row">
-      <div class="ov-field"><label>Difficulty</label>
+      <div class="ov-field"><label>Challenge Level</label>
         <select id="qDiff"><option value="easy">Easy (5 EXP, 3 G)</option><option value="medium" selected>Medium (15 EXP, 8 G)</option><option value="hard">Hard (30 EXP, 15 G)</option></select>
       </div>
     </div>
     <div class="ov-row">
-      <div class="ov-field"><label>Type</label>
+      <div class="ov-field"><label>Frequency</label>
         <select id="qType"><option value="daily">Once Daily</option><option value="repeat">Repeatable</option></select>
       </div>
-      <div class="ov-field"><label>Max/Day (repeat)</label><input type="number" id="qMax" value="0" min="0" max="99" placeholder="0=unlimited"></div>
+      <div class="ov-field"><label>Max/Day (0=Inf)</label><input type="number" id="qMax" value="0" min="0" max="99" placeholder="0=unlimited"></div>
     </div>
     <div class="ov-btns">
-      <button class="ov-cancel" onclick="closeOv('addQuestOv')">Cancel</button>
-      <button class="ov-save" onclick="saveQuest()">Create</button>
+      <button class="ov-cancel" onclick="closeOv('addQuestOv')">Flee</button>
+      <button class="ov-save" onclick="saveQuest()">Post to Board</button>
     </div>
   </div>
 </div>
 
-<!-- Level Up overlay -->
-<div class="overlay center" id="lvlUpOv">
+<div class="overlay" id="lvlUpOv">
   <div class="ov-box dq lvl-up-box">
     <div class="lvl-up-icon">⚔️</div>
     <div class="lvl-up-text" id="lvlUpText">Level Up!</div>
@@ -267,25 +286,23 @@ body{min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);f
   </div>
 </div>
 
-<!-- Loot Drop overlay -->
-<div class="overlay center" id="lootOv">
+<div class="overlay" id="lootOv">
   <div class="ov-box dq loot-box">
     <div class="loot-icon" id="lootIcon"></div>
     <div class="loot-text">A treasure chest appears!</div>
     <div class="loot-name" id="lootName"></div>
     <div class="loot-desc" id="lootDesc"></div>
-    <button class="loot-btn" onclick="closeOv('lootOv')">Claim!</button>
+    <button class="loot-btn" onclick="closeOv('lootOv')">Claim Loot</button>
   </div>
 </div>
 
-<!-- Item Detail overlay -->
-<div class="overlay center" id="itemOv">
+<div class="overlay" id="itemOv">
   <div class="ov-box dq item-detail">
     <div class="id-icon" id="idIcon"></div>
     <div class="id-name" id="idName"></div>
     <div class="id-rarity" id="idRarity"></div>
     <div class="id-desc" id="idDesc"></div>
-    <button class="id-close" onclick="closeOv('itemOv')">Close</button>
+    <button class="id-close" onclick="closeOv('itemOv')">Return</button>
   </div>
 </div>
 
@@ -294,7 +311,7 @@ body{min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--text);f
 
 <script>
 // ═══════════════════════════════════════
-// DATA
+// DATA (UNTOUCHED)
 // ═══════════════════════════════════════
 
 const CLASSES=[
@@ -491,19 +508,18 @@ const ITEMS=[
 ];
 
 const CATS=['monsters','weapons','armour','items','treasures','food','spells'];
-const RARITY_COLOR={common:'var(--common)',uncommon:'var(--green)',rare:'var(--blue)',epic:'var(--epic)',legendary:'var(--gold)'};
+const RARITY_COLOR={common:'var(--common)',uncommon:'var(--green)',rare:'var(--blue)',epic:'var(--epic)',legendary:'var(--text-gold)'};
 const LOOT_CHANCE=0.25;
 
 const CREATURES=[{name:'Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="csg" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#6DD8FF"/><stop offset="40%" stop-color="#2EA8E0"/><stop offset="100%" stop-color="#145F8A"/></radialGradient></defs><path d="M50 6C50 6,42 18,30 32C18 46,10 58,10 68C10 82,22 95,50 95C78 95,90 82,90 68C90 58,82 46,70 32C58 18,50 6,50 6Z" fill="url(#csg)"/><ellipse cx="38" cy="62" rx="7" ry="8" fill="#fff"/><ellipse cx="39.5" cy="62.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="62" cy="62" rx="7" ry="8" fill="#fff"/><ellipse cx="63.5" cy="62.5" rx="3.5" ry="4" fill="#1A1A2E"/><path d="M38 76Q42 83,50 84Q58 83,62 76" fill="none" stroke="#0E4A6A" stroke-width="2" stroke-linecap="round"/></svg>`},{name:'Dracky',svg:`<svg viewBox="0 0 130 100"><defs><radialGradient id="cdg" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5850A0"/><stop offset="100%" stop-color="#201840"/></radialGradient></defs><path d="M20 38L8 30Q3 40,10 48L18 52Z" fill="url(#cdg)"/><path d="M110 38L122 30Q127 40,120 48L112 52Z" fill="url(#cdg)"/><ellipse cx="65" cy="50" rx="26" ry="24" fill="url(#cdg)"/><ellipse cx="55" cy="46" rx="7" ry="7.5" fill="#fff"/><ellipse cx="56" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="75" cy="46" rx="7" ry="7.5" fill="#fff"/><ellipse cx="76" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><path d="M52 60Q58 70,65 70Q72 70,78 60" fill="#C06040"/></svg>`},{name:'King Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="ckg" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5CAEF0"/><stop offset="100%" stop-color="#103870"/></radialGradient><linearGradient id="ccr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE040"/><stop offset="100%" stop-color="#C89820"/></linearGradient></defs><ellipse cx="50" cy="68" rx="42" ry="28" fill="url(#ckg)"/><path d="M26 42L30 28L36 38L42 22L50 38L58 22L64 38L70 28L74 42Z" fill="url(#ccr)"/><rect x="26" y="40" width="48" height="7" rx="1" fill="url(#ccr)"/><circle cx="50" cy="43.5" r="2.8" fill="#C850C0"/><ellipse cx="40" cy="64" rx="6" ry="7" fill="#fff"/><ellipse cx="41" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><ellipse cx="60" cy="64" rx="6" ry="7" fill="#fff"/><ellipse cx="61" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><path d="M40 76Q50 82,60 76" fill="#D08070"/></svg>`}];
 
 // ═══════════════════════════════════════
-// STATE
+// STATE (UNTOUCHED)
 // ═══════════════════════════════════════
 const SK='heros-quest-board';
 let G={level:1,exp:0,gold:0,quests:[],owned:[],lootLog:[],questCompletions:{},shopCat:'monsters'};
 
 function loadState(){try{const r=localStorage.getItem(SK);if(r)G=Object.assign(G,JSON.parse(r));}catch(e){} if(!G.questCompletions)G.questCompletions={};
-  // Migrate old quests that had manual exp/gold
   G.quests.forEach(q=>{if(!q.diff){q.diff='medium';q.baseExp=q.exp||15;q.baseGold=q.gold||8;delete q.exp;delete q.gold;}});
 }
 function saveState(){localStorage.setItem(SK,JSON.stringify(G));}
@@ -551,7 +567,7 @@ function getClass(){
 // ═══════════════════════════════════════
 function renderQuests(){
   const wrap=document.getElementById('questList');
-  if(!G.quests.length){wrap.innerHTML='<div style="text-align:center;padding:24px;font-size:12px;color:var(--dim)">No quests yet! Add some above.</div>';return;}
+  if(!G.quests.length){wrap.innerHTML='<div class="empty-state"><div class="empty-icon">📜</div><div class="empty-text">Thy quest board is bare.</div><div class="empty-sub">Draft a new quest below to begin.</div></div>';return;}
   const today=new Date().toDateString();
   let html='';
   G.quests.forEach((q,i)=>{
@@ -564,7 +580,7 @@ function renderQuests(){
     const diffLabel=DIFF_LABELS[q.diff]||'Medium';
     const streakDays=getQuestStreak(q.id);
     const streakText=streakDays>0?' 🔥'+streakDays:'';
-    html+=`<div class="quest-card dq" style="animation-delay:${i*.03}s"><div class="quest-check ${checkClass}" ${maxed?'':`onclick="completeQuest(${i})"`}>${maxed?'✓':count>0?'✓':'○'}</div><div class="quest-body"><div class="quest-name">${esc(q.name)}</div><div class="quest-meta"><span class="xp">+${rewards.exp} EXP</span> · <span class="gp">+${rewards.gold} G</span> · ${diffLabel}${streakText}</div>${countText?`<div class="quest-count">${countText}</div>`:''}</div><button class="quest-del" onclick="deleteQuest(${i})">✕</button></div>`;
+    html+=`<div class="quest-card dq" style="animation-delay:${i*.03}s"><div class="quest-check ${checkClass}" ${maxed?'':`onclick="completeQuest(${i})"`}>${maxed?'✓':count>0?'✓':''}</div><div class="quest-body"><div class="quest-name">${esc(q.name)}</div><div class="quest-meta"><span class="xp">+${rewards.exp} EXP</span> · <span class="gp">+${rewards.gold} G</span> · ${diffLabel}${streakText}</div>${countText?`<div class="quest-count">${countText}</div>`:''}</div><button class="quest-del" onclick="deleteQuest(${i})">Erase</button></div>`;
   });
   wrap.innerHTML=html;
 }
@@ -576,17 +592,16 @@ const DIFF_LABELS={easy:'Easy',medium:'Medium',hard:'Hard'};
 
 function saveQuest(){
   const name=document.getElementById('qName').value.trim();
-  if(!name){toast('Name thy quest!');return;}
+  if(!name){toast('Name thy quest first!');return;}
   const diff=document.getElementById('qDiff').value;
   const tier=DIFF_TIERS[diff];
   G.quests.push({id:Date.now(),name,diff,baseExp:tier.exp,baseGold:tier.gold,type:document.getElementById('qType').value,max:parseInt(document.getElementById('qMax').value)||0});
-  saveState();renderQuests();closeOv('addQuestOv');toast('Quest added!');
+  saveState();renderQuests();closeOv('addQuestOv');toast('Quest pinned to the board!');
 }
 
 function deleteQuest(i){G.quests.splice(i,1);saveState();renderQuests();}
 
 function getQuestStreak(qId){
-  // Count consecutive days this quest was completed (not including today)
   let streak=0;
   const today=new Date();
   for(let i=1;i<=365;i++){
@@ -602,7 +617,6 @@ function calcRewards(q,countToday){
   const streak=Math.min(getQuestStreak(q.id),10);
   let exp=q.baseExp+streak;
   let gold=q.baseGold+streak;
-  // Repeatable: half rewards after first completion each day
   if(q.type==='repeat'&&countToday>0){exp=Math.max(1,Math.floor(exp/2));gold=Math.max(1,Math.floor(gold/2));}
   return{exp,gold,streak};
 }
@@ -620,7 +634,6 @@ function completeQuest(i){
   G.exp+=rewards.exp;
   G.gold+=rewards.gold;
 
-  // Check level up
   let leveled=false;
   while(G.exp>=expForLevel(G.level+1)&&G.level<99){
     G.level++;leveled=true;
@@ -630,7 +643,6 @@ function completeQuest(i){
 
   if(leveled)showLevelUp();
 
-  // Loot roll
   if(Math.random()<LOOT_CHANCE){
     setTimeout(()=>rollLoot(),leveled?1500:400);
   } else {
@@ -646,20 +658,20 @@ function showLevelUp(){
   const cls=getClass();
   document.getElementById('lvlUpText').textContent='Level '+G.level+'!';
   document.getElementById('lvlUpClass').textContent=cls.name;
-  document.getElementById('lvlUpSub').textContent='Jimmy has grown stronger!\nThe quest continues...';
+  document.getElementById('lvlUpSub').textContent='Thou hast grown stronger!\nThe quest continues...';
   openOv('lvlUpOv');
   burstParticles();
 }
 
 function burstParticles(){
   const c=document.getElementById('particleOv');
-  for(let i=0;i<30;i++){
+  for(let i=0;i<35;i++){
     const p=document.createElement('div');p.className='lvl-particle';
     const x=20+Math.random()*60;
     p.style.left=x+'%';p.style.top='50%';
-    const s=3+Math.random()*5;p.style.width=s+'px';p.style.height=s+'px';
-    const dx=(Math.random()-.5)*200;const dy=-100-Math.random()*200;
-    p.animate([{opacity:0,transform:'translate(0,0) scale(0)'},{opacity:1,transform:`translate(${dx*.3}px,${dy*.3}px) scale(1)`,offset:.2},{opacity:.5,transform:`translate(${dx*.7}px,${dy*.7}px) scale(.8)`,offset:.7},{opacity:0,transform:`translate(${dx}px,${dy}px) scale(.2)`}],{duration:800+Math.random()*600,easing:'ease-out',fill:'forwards',delay:Math.random()*300});
+    const s=4+Math.random()*6;p.style.width=s+'px';p.style.height=s+'px';
+    const dx=(Math.random()-.5)*250;const dy=-100-Math.random()*250;
+    p.animate([{opacity:0,transform:'translate(0,0) scale(0)'},{opacity:1,transform:`translate(${dx*.3}px,${dy*.3}px) scale(1)`,offset:.2},{opacity:.8,transform:`translate(${dx*.7}px,${dy*.7}px) scale(.8)`,offset:.7},{opacity:0,transform:`translate(${dx}px,${dy}px) scale(.2)`}],{duration:800+Math.random()*600,easing:'ease-out',fill:'forwards',delay:Math.random()*300});
     c.appendChild(p);setTimeout(()=>p.remove(),2000);
   }
 }
@@ -668,7 +680,6 @@ function burstParticles(){
 // LOOT
 // ═══════════════════════════════════════
 function rollLoot(){
-  // Weight by rarity
   const weights={common:50,uncommon:30,rare:14,epic:5,legendary:1};
   const pool=[];
   ITEMS.forEach(item=>{
@@ -677,7 +688,7 @@ function rollLoot(){
       for(let i=0;i<w;i++)pool.push(item);
     }
   });
-  if(!pool.length)return;// All owned!
+  if(!pool.length)return;
 
   const item=pool[Math.floor(Math.random()*pool.length)];
   G.owned.push(item.id);
@@ -728,11 +739,10 @@ function buyItem(id){
 // HERO TAB
 // ═══════════════════════════════════════
 function renderHero(){
-  const totalQuests=Object.values(G.questCompletions).reduce((s,v)=>s+v,0);
   document.getElementById('heroStats').innerHTML=`
     <div class="hero-stat dq"><div class="hs-val">${G.level}</div><div class="hs-label">Level</div></div>
     <div class="hero-stat dq"><div class="hs-val">${G.exp}</div><div class="hs-label">Total EXP</div></div>
-    <div class="hero-stat dq"><div class="hs-val">${G.gold} G</div><div class="hs-label">Gold</div></div>
+    <div class="hero-stat dq"><div class="hs-val">${G.gold}</div><div class="hs-label">Gold</div></div>
     <div class="hero-stat dq"><div class="hs-val">${G.owned.length}/${ITEMS.length}</div><div class="hs-label">Collection</div></div>
   `;
   const wrap=document.getElementById('classList');
@@ -749,8 +759,6 @@ function renderHero(){
 function renderTreasury(){
   const owned=G.owned.length;
   const total=ITEMS.length;
-  const byCat={};CATS.forEach(c=>byCat[c]={owned:0,total:0});
-  ITEMS.forEach(i=>{byCat[i.cat].total++;if(G.owned.includes(i.id))byCat[i.cat].owned++;});
 
   document.getElementById('treasuryStats').innerHTML=`
     <div class="ts-pill"><div class="ts-val">${owned}/${total}</div><div class="ts-label">Collected</div></div>
@@ -782,7 +790,7 @@ function showItemDetail(id){
 // ═══════════════════════════════════════
 function renderLootLog(){
   const wrap=document.getElementById('lootLogList');
-  if(!G.lootLog.length){wrap.innerHTML='<div style="text-align:center;padding:24px;font-size:12px;color:var(--dim)">No loot yet. Complete quests!</div>';return;}
+  if(!G.lootLog.length){wrap.innerHTML='<div class="empty-state"><div class="empty-icon">📜</div><div class="empty-text">No loot yet.</div><div class="empty-sub">Complete quests to earn rewards!</div></div>';return;}
   let html='';
   G.lootLog.slice(0,50).forEach((entry,i)=>{
     const item=ITEMS.find(x=>x.id===entry.itemId);
@@ -824,12 +832,12 @@ function exportJSON(){
   if(!G.quests.length&&!G.owned.length){toast('Nothing to export');return;}
   const b=new Blob([JSON.stringify(G,null,2)],{type:'application/json'});
   const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='heros-quest-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);
-  toast('Exported!');
+  toast('Sacred Tome Exported!');
 }
 function importData(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=function(e){try{const imp=JSON.parse(e.target.result);G=Object.assign(G,imp);saveState();updateAll();renderQuests();renderShop();toast('Data loaded!');}catch(err){toast('Import failed');}};
+  reader.onload=function(e){try{const imp=JSON.parse(e.target.result);G=Object.assign(G,imp);saveState();updateAll();renderQuests();renderShop();toast('Data successfully restored!');}catch(err){toast('The ancient magic failed. (Import error)');}};
   reader.readAsText(file);event.target.value='';
 }
 
