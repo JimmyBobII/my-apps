@@ -311,7 +311,7 @@ body {
 
 <script>
 // ═══════════════════════════════════════
-// DATA (UNTOUCHED)
+// DATA (EXPANDED)
 // ═══════════════════════════════════════
 
 const CLASSES=[
@@ -327,7 +327,7 @@ function expForLevel(l){return Math.floor(80*(l**1.5));}
 
 // ── COLLECTIBLES CATALOGUE ──
 const ITEMS=[
-// ═══ MONSTERS (30) ═══
+// ═══ MONSTERS (60) ═══
 {id:'m01',name:'Slime',icon:'🟦',cat:'monsters',rarity:'common',price:20,desc:'The most iconic monster. Gooey and harmless... mostly.'},
 {id:'m02',name:'She-Slime',icon:'🩷',cat:'monsters',rarity:'common',price:25,desc:'A slime of distinguished taste and pinkish hue.'},
 {id:'m03',name:'Metal Slime',icon:'⬜',cat:'monsters',rarity:'rare',price:200,desc:'Worth a fortune in EXP. Good luck catching one.'},
@@ -363,8 +363,33 @@ const ITEMS=[
 {id:'m33',name:'Gracos',icon:'🐙',cat:'monsters',rarity:'rare',price:200,desc:'An octopus lord who hoards tablet fragments.'},
 {id:'m34',name:'Hacksaurus',icon:'🦖',cat:'monsters',rarity:'uncommon',price:70,desc:'A dinosaur with an axe. Nature finds a way.'},
 {id:'m35',name:'Powie Yowie',icon:'❄️',cat:'monsters',rarity:'common',price:35,desc:'A fluffy yeti. Maribel once used one as a decoy.'},
+{id:'m36',name:'Cruelcumber',icon:'🥒',cat:'monsters',rarity:'common',price:22,desc:'A cucumber with a bad attitude and a tiny spear.'},
+{id:'m37',name:'Platypunk',icon:'🦔',cat:'monsters',rarity:'common',price:24,desc:'A mohawked menace that loves to dance.'},
+{id:'m38',name:'Lips',icon:'💋',cat:'monsters',rarity:'common',price:26,desc:'Has a lick that can stun the bravest hero.'},
+{id:'m39',name:'Bodkin Archer',icon:'🏹',cat:'monsters',rarity:'common',price:32,desc:'A small, hooded creature with surprisingly good aim.'},
+{id:'m40',name:'Dancing Flame',icon:'🔥',cat:'monsters',rarity:'uncommon',price:58,desc:'A living fire that dances to a heat-filled rhythm.'},
+{id:'m41',name:'Silvapithecus',icon:'🐒',cat:'monsters',rarity:'uncommon',price:68,desc:'A silver-furred ape with a penchant for mid-tier magic.'},
+{id:'m42',name:'Gigantes',icon:'👁️',cat:'monsters',rarity:'rare',price:185,desc:'One eye, one massive club, zero patience.'},
+{id:'m43',name:'Hades Condor',icon:'🦅',cat:'monsters',rarity:'uncommon',price:62,desc:'Known for snatching heroes right off the battlefield.'},
+{id:'m44',name:'Wight King',icon:'💀',cat:'monsters',rarity:'rare',price:210,desc:'An undead monarch who still commands the elements.'},
+{id:'m45',name:'Psaro',icon:'⚔️',cat:'monsters',rarity:'legendary',price:2600,desc:'The Master of Monsterkind. Tragically misunderstood?'},
+{id:'m46',name:'Nimzo',icon:'🧿',cat:'monsters',rarity:'legendary',price:2700,desc:'The Grandmaster of the Underworld. Likes purple.'},
+{id:'m47',name:'Rhapthorne',icon:'🔮',cat:'monsters',rarity:'legendary',price:2850,desc:'A lord of darkness trapped inside a scepter.'},
+{id:'m48',name:'Corvus',icon:'👼',cat:'monsters',rarity:'legendary',price:2900,desc:'A fallen guardian with a very long grudge.'},
+{id:'m49',name:'Malroth',icon:'🐉',cat:'monsters',rarity:'legendary',price:3200,desc:'The God of Destruction. Wakes up very cranky.'},
+{id:'m50',name:'Muddy Hand',icon:'🖐️',cat:'monsters',rarity:'common',price:15,desc:'If you see one, expect twenty more shortly.'},
+{id:'m51',name:'Rockbomb',icon:'💣',cat:'monsters',rarity:'uncommon',price:55,desc:'Don\'t lower its HP too far, or... KABOOM.'},
+{id:'m52',name:'Candy Cat',icon:'🐱',cat:'monsters',rarity:'common',price:28,desc:'A feline monster with stripes like a candy cane.'},
+{id:'m53',name:'Sham Hamwitch',icon:'🐷',cat:'monsters',rarity:'common',price:30,desc:'A pig in a hat. Claims to be a wizard.'},
+{id:'m54',name:'Bunicorn',icon:'🐰',cat:'monsters',rarity:'common',price:35,desc:'A bunny with a horn. Nature\'s perfect spear.'},
+{id:'m55',name:'Spiked Hare',icon:'🐇',cat:'monsters',rarity:'uncommon',price:65,desc:'A Bunicorn that spent too much time in the gym.'},
+{id:'m56',name:'Teeny Sanguini',icon:'🦇',cat:'monsters',rarity:'common',price:40,desc:'Looks like a cow-bat-balloon hybrid. Distractingly cute.'},
+{id:'m57',name:'Pink Sanguini',icon:'🩷',cat:'monsters',rarity:'uncommon',price:75,desc:'Slightly more aggressive, significantly more pink.'},
+{id:'m58',name:'Genki Sanguini',icon:'💛',cat:'monsters',rarity:'rare',price:150,desc:'The angriest balloon you will ever meet.'},
+{id:'m59',name:'King Cureslime',icon:'💚',cat:'monsters',rarity:'epic',price:750,desc:'A Healslime that ate too many other Healslimes.'},
+{id:'m60',name:'Gem Slime',icon:'💎',cat:'monsters',rarity:'legendary',price:3500,desc:'It\'s basically a walking jackpot. Hard to find.'},
 
-// ═══ WEAPONS (20) ═══
+// ═══ WEAPONS (35) ═══
 {id:'w01',name:'Cypress Stick',icon:'🪵',cat:'weapons',rarity:'common',price:10,desc:'Every hero starts somewhere. Usually here.'},
 {id:'w02',name:'Copper Sword',icon:'🗡️',cat:'weapons',rarity:'common',price:30,desc:'A decent starter blade. Gets the job done.'},
 {id:'w03',name:'Steel Broadsword',icon:'⚔️',cat:'weapons',rarity:'uncommon',price:80,desc:'A warrior\'s reliable companion.'},
@@ -385,8 +410,23 @@ const ITEMS=[
 {id:'w18',name:'Hela\'s Hammer',icon:'🔨',cat:'weapons',rarity:'epic',price:850,desc:'The weapon of a death goddess. Hits like a truck.'},
 {id:'w19',name:'Gringham Whip',icon:'🪢',cat:'weapons',rarity:'legendary',price:2200,desc:'The ultimate whip. Hits all foes with devastating force.'},
 {id:'w20',name:'Zenithian Sword',icon:'🌟',cat:'weapons',rarity:'legendary',price:3000,desc:'Forged in Zenithia. Cleaves evil asunder.'},
+{id:'w21',name:'Oaken Staff',icon:'🪵',cat:'weapons',rarity:'common',price:15,desc:'Sturdier than a cypress stick. Slightly.'},
+{id:'w22',name:'Iron Broadsword',icon:'⚔️',cat:'weapons',rarity:'common',price:45,desc:'The reliable choice for the budget-conscious knight.'},
+{id:'w23',name:'Cautery Sword',icon:'🗡️',cat:'weapons',rarity:'uncommon',price:115,desc:'A blade that burns with the power of fire.'},
+{id:'w24',name:'Dragonsbane',icon:'🐉',cat:'weapons',rarity:'uncommon',price:145,desc:'Specifically designed to pierce thick dragon scales.'},
+{id:'w25',name:'Sword of Kings',icon:'👑',cat:'weapons',rarity:'epic',price:1100,desc:'Forged from Orichalcum for a legendary hero.'},
+{id:'w26',name:'Liquid Metal Sword',icon:'🪩',cat:'weapons',rarity:'legendary',price:3500,desc:'A blade so sharp it can cut through metal slimes.'},
+{id:'w27',name:'Poker',icon:'🔱',cat:'weapons',rarity:'legendary',price:3200,desc:'The ultimate spear. Just keep poking.'},
+{id:'w28',name:'Scourge Whip',icon:'🪢',cat:'weapons',rarity:'rare',price:380,desc:'A multi-headed whip that cracks like thunder.'},
+{id:'w29',name:'Odin\'s Bow',icon:'🏹',cat:'weapons',rarity:'epic',price:950,desc:'A divine bow that never misses its mark.'},
+{id:'w30',name:'Uber Gringham Whip',icon:'⚡',cat:'weapons',rarity:'legendary',price:3800,desc:'A whip that strikes every enemy on screen.'},
+{id:'w31',name:'Dragon Wing',icon:'🪽',cat:'weapons',rarity:'uncommon',price:125,desc:'A boomerang made from dragon bone.'},
+{id:'w32',name:'Razor Wing',icon:'🔪',cat:'weapons',rarity:'rare',price:340,desc:'A boomerang that doubles as a set of flying knives.'},
+{id:'w33',name:'War Hammer',icon:'🔨',cat:'weapons',rarity:'uncommon',price:95,desc:'Simple, heavy, and very effective at crushing skulls.'},
+{id:'w34',name:'Wrecking Flail',icon:'⛓️',cat:'weapons',rarity:'epic',price:1050,desc:'Hits every enemy at once. Hard on the wrists.'},
+{id:'w35',name:'Metal Wing Boomerang',icon:'💠',cat:'weapons',rarity:'legendary',price:3100,desc:'The only way to hit five metal slimes at once.'},
 
-// ═══ ARMOUR (20) ═══
+// ═══ ARMOUR (35) ═══
 {id:'a01',name:'Plain Clothes',icon:'👕',cat:'armour',rarity:'common',price:5,desc:'Just a shirt. Offers moral support.'},
 {id:'a02',name:'Leather Armour',icon:'🦺',cat:'armour',rarity:'common',price:25,desc:'Better than nothing. Smells like cattle.'},
 {id:'a03',name:'Iron Armour',icon:'🪖',cat:'armour',rarity:'uncommon',price:80,desc:'Sturdy protection. A bit heavy for jogging.'},
@@ -407,8 +447,23 @@ const ITEMS=[
 {id:'a18',name:'Silver Mail',icon:'🪙',cat:'armour',rarity:'uncommon',price:130,desc:'Gleaming silver armour. Undead hate it.'},
 {id:'a19',name:'Gigant Armour',icon:'💪',cat:'armour',rarity:'epic',price:750,desc:'Forged for giants. Somehow fits you.'},
 {id:'a20',name:'Zenithian Armour',icon:'✨',cat:'armour',rarity:'legendary',price:3000,desc:'Armour of the Zenithian hero. Divine protection.'},
+{id:'a21',name:'Boxer Shorts',icon:'🩳',cat:'armour',rarity:'common',price:12,desc:'Offers zero protection. Extremely breathable.'},
+{id:'a22',name:'Wayfarer\'s Clothes',icon:'🧥',cat:'armour',rarity:'common',price:18,desc:'Standard attire for someone leaving home forever.'},
+{id:'a23',name:'Cloak of Evasion',icon:'🧣',cat:'armour',rarity:'uncommon',price:110,desc:'Makes you slightly more slippery in a fight.'},
+{id:'a24',name:'Cat Suit',icon:'🐾',cat:'armour',rarity:'rare',price:320,desc:'Don\'t ask why the shopkeeper is selling this.'},
+{id:'a25',name:'Spiked Armour',icon:'🛡️',cat:'armour',rarity:'rare',price:380,desc:'Returns a portion of damage to the attacker.'},
+{id:'a26',name:'Mirror Armour',icon:'🪞',cat:'armour',rarity:'epic',price:850,desc:'Occasionally reflects spells back at the caster.'},
+{id:'a27',name:'Liquid Metal Armour',icon:'🧪',cat:'armour',rarity:'legendary',price:2800,desc:'Smooth, shiny, and nearly indestructible.'},
+{id:'a28',name:'Princess Robe',icon:'👗',cat:'armour',rarity:'epic',price:920,desc:'High magical resistance and very fashionable.'},
+{id:'a29',name:'Silver Shield',icon:'🛡️',cat:'armour',rarity:'uncommon',price:145,desc:'Effective against fire and ice breath.'},
+{id:'a30',name:'Dragon Shield',icon:'🐲',cat:'armour',rarity:'rare',price:420,desc:'A shield forged from the scales of a Great Dragon.'},
+{id:'a31',name:'Liquid Metal Shield',icon:'🪩',cat:'armour',rarity:'legendary',price:2600,desc:'The gold standard of defense. Or rather, the liquid metal standard.'},
+{id:'a32',name:'Silver Tiara',icon:'👑',cat:'armour',rarity:'uncommon',price:85,desc:'A delicate headpiece that boosts magical power.'},
+{id:'a33',name:'Golden Tiara',icon:'👸',cat:'armour',rarity:'rare',price:280,desc:'Worn by royalty and those who want to look like it.'},
+{id:'a34',name:'Thinking Cap',icon:'🎓',cat:'armour',rarity:'rare',price:255,desc:'Boosts wisdom. Doesn\'t actually do the thinking for you.'},
+{id:'a35',name:'Duplicating Hat',icon:'🎩',cat:'armour',rarity:'epic',price:880,desc:'Gives a chance to cast a spell twice for the cost of one.'},
 
-// ═══ ITEMS (20) ═══
+// ═══ ITEMS (35) ═══
 {id:'i01',name:'Medicinal Herb',icon:'🌿',cat:'items',rarity:'common',price:8,desc:'A staple of every adventurer\'s pack.'},
 {id:'i02',name:'Antidotal Herb',icon:'🍃',cat:'items',rarity:'common',price:10,desc:'Cures poison. Tastes terrible.'},
 {id:'i03',name:'Chimaera Wing',icon:'🪶',cat:'items',rarity:'common',price:15,desc:'Teleports you to a previously visited town.'},
@@ -429,8 +484,23 @@ const ITEMS=[
 {id:'i18',name:'Moonwort Bulb',icon:'🌛',cat:'items',rarity:'common',price:20,desc:'Cures paralysis. Glows in moonlight.'},
 {id:'i19',name:'Seed of Life',icon:'❤️',cat:'items',rarity:'rare',price:180,desc:'Permanently increases HP. Precious.'},
 {id:'i20',name:'Reset Stone',icon:'🔄',cat:'items',rarity:'epic',price:500,desc:'Resets all skill points. Second chances do exist.'},
+{id:'i21',name:'Seed of Deftness',icon:'🧤',cat:'items',rarity:'uncommon',price:65,desc:'Permanently increases your chance for critical hits.'},
+{id:'i22',name:'Seed of Sorcery',icon:'🔮',cat:'items',rarity:'uncommon',price:65,desc:'Permanently increases magical damage.'},
+{id:'i23',name:'Seed of Therapeusis',icon:'🩹',cat:'items',rarity:'uncommon',price:65,desc:'Permanently increases healing effectiveness.'},
+{id:'i24',name:'Strong Medicine',icon:'🧪',cat:'items',rarity:'common',price:25,desc:'A concentrated herb that heals more than the basic stuff.'},
+{id:'i25',name:'Rose-Root',icon:'🌹',cat:'items',rarity:'uncommon',price:55,desc:'A medicinal root that heals and cures paralysis.'},
+{id:'i26',name:'Special Antidote',icon:'🧪',cat:'items',rarity:'common',price:15,desc:'Clears poison and heals a little bit of HP.'},
+{id:'i27',name:'Panacea',icon:'🧪',cat:'items',rarity:'rare',price:185,desc:'Cures all status ailments in one go.'},
+{id:'i28',name:'Perfect Panacea',icon:'✨',cat:'items',rarity:'epic',price:650,desc:'Cures everything and restores all HP.'},
+{id:'i29',name:'Softwort',icon:'🥬',cat:'items',rarity:'common',price:18,desc:'Cures paralysis and tastes like cabbage.'},
+{id:'i30',name:'Coagulant',icon:'🩸',cat:'items',rarity:'common',price:22,desc:'Use it to confuse a group of enemies.'},
+{id:'i31',name:'Tangleweb',icon:'🕸',cat:'items',rarity:'common',price:20,desc:'Slows down enemies by getting them stuck.'},
+{id:'i32',name:'Sleeping Hibiscus',icon:'🌺',cat:'items',rarity:'common',price:24,desc:'Toss it at a monster to make them drowsy.'},
+{id:'i33',name:'Nectar',icon:'🍯',cat:'items',rarity:'uncommon',price:48,desc:'Used for alchemy and attracting shiny slimes.'},
+{id:'i34',name:'Fresh Water',icon:'💧',cat:'items',rarity:'common',price:12,desc:'Crisp, clean, and used in many recipes.'},
+{id:'i35',name:'Evenpure',icon:'💎',cat:'items',rarity:'rare',price:210,desc:'A purifying stone that removes curses from gear.'},
 
-// ═══ TREASURES (20) ═══
+// ═══ TREASURES (35) ═══
 {id:'t01',name:'Pretty Pebble',icon:'🪨',cat:'treasures',rarity:'common',price:5,desc:'Smooth and pleasant to hold.'},
 {id:'t02',name:'Sparkly Shell',icon:'🐚',cat:'treasures',rarity:'common',price:10,desc:'Found on a distant beach. Smells like the sea.'},
 {id:'t03',name:'Starry Night Gem',icon:'🌙',cat:'treasures',rarity:'uncommon',price:80,desc:'Captures the beauty of the night sky.'},
@@ -451,8 +521,23 @@ const ITEMS=[
 {id:'t18',name:'Sun Crown',icon:'☀️',cat:'treasures',rarity:'legendary',price:2800,desc:'A crown that radiates sunlight. Blindingly gorgeous.'},
 {id:'t19',name:'Rusty Sword',icon:'🗡️',cat:'treasures',rarity:'common',price:8,desc:'Could be anything under that rust. Probably nothing.'},
 {id:'t20',name:'Treasure Map',icon:'🗺️',cat:'treasures',rarity:'uncommon',price:55,desc:'Leads to a grotto. Or a dead end. Adventure either way.'},
+{id:'t21',name:'Gold Nugget',icon:'🧀',cat:'treasures',rarity:'uncommon',price:120,desc:'Pure gold in its rawest form. Shiny.'},
+{id:'t22',name:'Iron Ore',icon:'🪨',cat:'treasures',rarity:'common',price:18,desc:'The building block of every basic sword.'},
+{id:'t23',name:'Mirror Stone',icon:'💎',cat:'treasures',rarity:'uncommon',price:85,desc:'Reflects the light beautifully. Used in alchemy.'},
+{id:'t24',name:'Flintstone',icon:'🪵',cat:'treasures',rarity:'common',price:10,desc:'Good for making fire or very primitive tools.'},
+{id:'t25',name:'Ice Crystal',icon:'❄️',cat:'treasures',rarity:'uncommon',price:95,desc:'Stays cold even in the Desert of Death.'},
+{id:'t26',name:'Thunderball',icon:'⚡',cat:'treasures',rarity:'rare',price:240,desc:'A ball of static energy that crackles when touched.'},
+{id:'t27',name:'Brighten Rock',icon:'🕯️',cat:'treasures',rarity:'uncommon',price:78,desc:'Glows with a steady, warm light.'},
+{id:'t28',name:'Astral Sand',icon:'⏳',cat:'treasures',rarity:'rare',price:265,desc:'Sand that seems to contain a tiny galaxy.'},
+{id:'t29',name:'Royal Soil',icon:'🪴',cat:'treasures',rarity:'uncommon',price:72,desc:'Earth taken from the garden of a great castle.'},
+{id:'t30',name:'Mythril Ore',icon:'💎',cat:'treasures',rarity:'rare',price:320,desc:'The legendary silver metal used for elite gear.'},
+{id:'t31',name:'Sainted Soma',icon:'🧪',cat:'treasures',rarity:'epic',price:850,desc:'A liquid used to evolve the most powerful weapons.'},
+{id:'t32',name:'Ethereal Stone',icon:'🔮',cat:'treasures',rarity:'epic',price:780,desc:'A stone that exists between two worlds.'},
+{id:'t33',name:'Chronocrystal',icon:'⌛',cat:'treasures',rarity:'legendary',price:3000,desc:'Extremely expensive. Can bend time during crafting.'},
+{id:'t34',name:'Agate of Evolution',icon:'💠',cat:'treasures',rarity:'legendary',price:3500,desc:'The key to reaching a weapon\'s final form.'},
+{id:'t35',name:'Solitaire Diamond',icon:'💎',cat:'treasures',rarity:'legendary',price:2900,desc:'Flawless, huge, and worth more than a small kingdom.'},
 
-// ═══ FOOD (25) ═══
+// ═══ FOOD (35) ═══
 {id:'f01',name:'Plain Cheese',icon:'🧀',cat:'food',rarity:'common',price:8,desc:'Simple but satisfying. A tavern staple.'},
 {id:'f02',name:'Fresh Bread',icon:'🍞',cat:'food',rarity:'common',price:5,desc:'Warm from the oven. Smells like home.'},
 {id:'f03',name:'Cooked Steak',icon:'🥩',cat:'food',rarity:'uncommon',price:40,desc:'A thick cut, perfectly seared. Restores morale.'},
@@ -478,8 +563,18 @@ const ITEMS=[
 {id:'f23',name:'Hero\'s Breakfast',icon:'🍳',cat:'food',rarity:'uncommon',price:45,desc:'Full English. Sausage, bacon, eggs, the lot.'},
 {id:'f24',name:'Traveller\'s Jerky',icon:'🥓',cat:'food',rarity:'common',price:12,desc:'Dried meat for the road. Chewy but reliable.'},
 {id:'f25',name:'Birthday Cake',icon:'🎂',cat:'food',rarity:'epic',price:500,desc:'For a very special occasion. Wish upon it.'},
+{id:'f26',name:'Mild Cheese',icon:'🧀',cat:'food',rarity:'common',price:15,desc:'Makes your pet breathe a tiny bit of fire.'},
+{id:'f27',name:'Chunky Cheese',icon:'🧀',cat:'food',rarity:'uncommon',price:42,desc:'Harder cheese that boosts defense when eaten.'},
+{id:'f28',name:'Super Spicy Cheese',icon:'🔥',cat:'food',rarity:'rare',price:175,desc:'Induces dragon-like fire breath. Spicy!'},
+{id:'f29',name:'Angel Cheese',icon:'😇',cat:'food',rarity:'epic',price:550,desc:'Heals the user and creates a holy aura.'},
+{id:'f30',name:'Cured Ham',icon:'🍖',cat:'food',rarity:'common',price:18,desc:'Salty, chewy, and lasts for years in a backpack.'},
+{id:'f31',name:'Dragon Steak',icon:'🥩',cat:'food',rarity:'rare',price:220,desc:'Tastes like chicken, but with much more attitude.'},
+{id:'f32',name:'Slime Bun',icon:'🥟',cat:'food',rarity:'uncommon',price:38,desc:'A steamed bun shaped like a slime. Almost too cute to eat.'},
+{id:'f33',name:'Chimera Wing Wing',icon:'🍗',cat:'food',rarity:'common',price:22,desc:'Spicy buffalo-style wings made from... wings.'},
+{id:'f34',name:'Magic Mocha',icon:'☕',cat:'food',rarity:'uncommon',price:52,desc:'Boosts MP and keeps the hero awake during night shifts.'},
+{id:'f35',name:'Golem Cookie',icon:'🍪',cat:'food',rarity:'uncommon',price:40,desc:'Tough as a rock, but crumbles with a nice glass of milk.'},
 
-// ═══ SPELLS (25) ═══
+// ═══ SPELLS (40) ═══
 {id:'s01',name:'Heal',icon:'💖',cat:'spells',rarity:'common',price:15,desc:'Restores a small amount of HP. The bread and butter.'},
 {id:'s02',name:'Midheal',icon:'💗',cat:'spells',rarity:'uncommon',price:50,desc:'Stronger healing magic. Reliable in a pinch.'},
 {id:'s03',name:'Fullheal',icon:'💝',cat:'spells',rarity:'rare',price:200,desc:'Completely restores one ally\'s HP. Essential.'},
@@ -505,16 +600,33 @@ const ITEMS=[
 {id:'s23',name:'Oomph',icon:'💪',cat:'spells',rarity:'uncommon',price:55,desc:'Doubles attack power. Hit twice as hard.'},
 {id:'s24',name:'Hocus Pocus',icon:'🎰',cat:'spells',rarity:'rare',price:250,desc:'Totally random effect. Could be anything. ANYTHING.'},
 {id:'s25',name:'Magic Burst',icon:'🌈',cat:'spells',rarity:'legendary',price:3500,desc:'Dumps ALL your MP into one cataclysmic blast. The nuclear option.'},
+{id:'s26',name:'Sap',icon:'📉',cat:'spells',rarity:'common',price:18,desc:'Lowers an enemy\'s defense. Essential for boss fights.'},
+{id:'s27',name:'Kasap',icon:'📉',cat:'spells',rarity:'uncommon',price:62,desc:'Lowers the defense of an entire group.'},
+{id:'s28',name:'Blunt',icon:'🔨',cat:'spells',rarity:'common',price:22,desc:'Reduces an enemy\'s physical attack power.'},
+{id:'s29',name:'Dazzle',icon:'😵‍💫',cat:'spells',rarity:'common',price:20,desc:'Surrounds enemies with illusions so they miss their hits.'},
+{id:'s30',name:'Fizzle',icon:'🤐',cat:'spells',rarity:'uncommon',price:75,desc:'Prevents enemies from casting spells. Shh!'},
+{id:'s31',name:'Snooze',icon:'💤',cat:'spells',rarity:'common',price:22,desc:'A magical lullaby that puts enemies to sleep.'},
+{id:'s32',name:'Kasnooze',icon:'😴',cat:'spells',rarity:'rare',price:190,desc:'Deep sleep for a whole group of monsters.'},
+{id:'s33',name:'Drain Magic',icon:'🪄',cat:'spells',rarity:'uncommon',price:85,desc:'Steal MP from an enemy to refuel your own.'},
+{id:'s34',name:'Bounce',icon:'🪞',cat:'spells',rarity:'rare',price:240,desc:'Creates a barrier that reflects all spells.'},
+{id:'s35',name:'Insulatle',icon:'🧱',cat:'spells',rarity:'uncommon',price:65,desc:'Protects the party from fire and ice breath.'},
+{id:'s36',name:'Acceleratle',icon:'💨',cat:'spells',rarity:'uncommon',price:58,desc:'Boosts the whole party\'s agility. Go first!'},
+{id:'s37',name:'Deceleratle',icon:'🐢',cat:'spells',rarity:'common',price:18,desc:'Makes the monsters move at a snail\'s pace.'},
+{id:'s38',name:'Kamikazee',icon:'💥',cat:'spells',rarity:'epic',price:950,desc:'The ultimate sacrifice. Boom for them, death for you.'},
+{id:'s39',name:'Kerplunk',icon:'💖',cat:'spells',rarity:'legendary',price:3000,desc:'Sacrifice yourself to fully heal and revive the party.'},
+{id:'s40',name:'Gigagash',icon:'⚡',cat:'spells',rarity:'legendary',price:3200,desc:'The ultimate sword technique. Pure lightning destruction.'},
 ];
 
 const CATS=['monsters','weapons','armour','items','treasures','food','spells'];
 const RARITY_COLOR={common:'var(--common)',uncommon:'var(--green)',rare:'var(--blue)',epic:'var(--epic)',legendary:'var(--text-gold)'};
-const LOOT_CHANCE=0.25;
+
+/* ── Updated Loot Chance ── */
+const LOOT_CHANCE=0.10; // Reduced from 0.25[cite: 2] to make collection long-term
 
 const CREATURES=[{name:'Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="csg" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#6DD8FF"/><stop offset="40%" stop-color="#2EA8E0"/><stop offset="100%" stop-color="#145F8A"/></radialGradient></defs><path d="M50 6C50 6,42 18,30 32C18 46,10 58,10 68C10 82,22 95,50 95C78 95,90 82,90 68C90 58,82 46,70 32C58 18,50 6,50 6Z" fill="url(#csg)"/><ellipse cx="38" cy="62" rx="7" ry="8" fill="#fff"/><ellipse cx="39.5" cy="62.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="62" cy="62" rx="7" ry="8" fill="#fff"/><ellipse cx="63.5" cy="62.5" rx="3.5" ry="4" fill="#1A1A2E"/><path d="M38 76Q42 83,50 84Q58 83,62 76" fill="none" stroke="#0E4A6A" stroke-width="2" stroke-linecap="round"/></svg>`},{name:'Dracky',svg:`<svg viewBox="0 0 130 100"><defs><radialGradient id="cdg" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5850A0"/><stop offset="100%" stop-color="#201840"/></radialGradient></defs><path d="M20 38L8 30Q3 40,10 48L18 52Z" fill="url(#cdg)"/><path d="M110 38L122 30Q127 40,120 48L112 52Z" fill="url(#cdg)"/><ellipse cx="65" cy="50" rx="26" ry="24" fill="url(#cdg)"/><ellipse cx="55" cy="46" rx="7" ry="7.5" fill="#fff"/><ellipse cx="56" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><ellipse cx="75" cy="46" rx="7" ry="7.5" fill="#fff"/><ellipse cx="76" cy="46.5" rx="3.5" ry="4" fill="#1A1A2E"/><path d="M52 60Q58 70,65 70Q72 70,78 60" fill="#C06040"/></svg>`},{name:'King Slime',svg:`<svg viewBox="0 0 100 100"><defs><radialGradient id="ckg" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#5CAEF0"/><stop offset="100%" stop-color="#103870"/></radialGradient><linearGradient id="ccr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE040"/><stop offset="100%" stop-color="#C89820"/></linearGradient></defs><ellipse cx="50" cy="68" rx="42" ry="28" fill="url(#ckg)"/><path d="M26 42L30 28L36 38L42 22L50 38L58 22L64 38L70 28L74 42Z" fill="url(#ccr)"/><rect x="26" y="40" width="48" height="7" rx="1" fill="url(#ccr)"/><circle cx="50" cy="43.5" r="2.8" fill="#C850C0"/><ellipse cx="40" cy="64" rx="6" ry="7" fill="#fff"/><ellipse cx="41" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><ellipse cx="60" cy="64" rx="6" ry="7" fill="#fff"/><ellipse cx="61" cy="64.5" rx="3" ry="3.8" fill="#1A1A2E"/><path d="M40 76Q50 82,60 76" fill="#D08070"/></svg>`}];
 
 // ═══════════════════════════════════════
-// STATE (UNTOUCHED)
+// STATE
 // ═══════════════════════════════════════
 const SK='heros-quest-board';
 let G={level:1,exp:0,gold:0,quests:[],owned:[],lootLog:[],questCompletions:{},shopCat:'monsters'};
